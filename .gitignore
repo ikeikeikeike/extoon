@@ -25,3 +25,17 @@ erl_crash.dump
 
 /*.secret.*
 /config/*.secret.*
+
+/web/static/js
+/web/static/css
+/web/static/assets/images
+/web/static/assets/prepare/common.js
+
+/web/templates
+
+/log
+/tags
+
+/BUILDING
+/PRODUCTION
+/INNER1

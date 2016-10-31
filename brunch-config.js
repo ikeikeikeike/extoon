@@ -53,6 +53,18 @@ exports.config = {
     babel: {
       // Do not use ES6 compiler in vendor code
       ignore: [/web\/static\/vendor/]
+    },
+    uglify: {
+      mangle: false,
+      compress: {
+        global_defs: {
+          DEBUG: false
+        }
+      }
+    },
+    cleancss: {
+      keepSpecialComments: 0,
+      removeEmpty: true
     }
   },
 
