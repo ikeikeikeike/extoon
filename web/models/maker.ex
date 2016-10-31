@@ -2,6 +2,8 @@ defmodule Extoon.Maker do
   use Extoon.Web, :model
 
   schema "makers" do
+    has_many :entries, Extoon.Entry
+
     field :identifier, :integer
     field :name, :string
     field :alias, :string
