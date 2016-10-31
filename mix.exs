@@ -22,6 +22,8 @@ defmodule Extoon.Mixfile do
        :phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
        :phoenix_ecto, :postgrex,
 
+       :httpoison,
+
        :arc_ecto,
        :ex_aws,
        :hackney,
@@ -46,10 +48,12 @@ defmodule Extoon.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
+
+      {:httpoison, "~> 0.9"},
+
+      # arcs
       {:arc, "~> 0.6.0-rc3"},
       {:arc_ecto, "~> 0.5.0-rc1"},
-
-      # If using Amazon S3:
       {:ex_aws, "~> 1.0.0-rc3"},
       {:hackney, "~> 1.5"},
       {:poison, "~> 2.0"},
