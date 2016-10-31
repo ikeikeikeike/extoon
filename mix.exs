@@ -18,8 +18,15 @@ defmodule Extoon.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Extoon, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+     applications: [
+       :phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
+       :phoenix_ecto, :postgrex,
+
+       :arc_ecto,
+       :ex_aws,
+       :hackney,
+       :poison
+     ]]
   end
 
   # Specifies which paths to compile per environment.
@@ -30,14 +37,24 @@ defmodule Extoon.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.2.1"},
-     {:phoenix_pubsub, "~> 1.0"},
-     {:phoenix_ecto, "~> 3.0"},
-     {:postgrex, ">= 0.0.0"},
-     {:phoenix_html, "~> 2.6"},
-     {:phoenix_live_reload, "~> 1.0", only: :dev},
-     {:gettext, "~> 0.11"},
-     {:cowboy, "~> 1.0"}]
+    [
+      {:phoenix, "~> 1.2.1"},
+      {:phoenix_pubsub, "~> 1.0"},
+      {:phoenix_ecto, "~> 3.0"},
+      {:postgrex, ">= 0.0.0"},
+      {:phoenix_html, "~> 2.6"},
+      {:phoenix_live_reload, "~> 1.0", only: :dev},
+      {:gettext, "~> 0.11"},
+      {:cowboy, "~> 1.0"},
+      {:arc, "~> 0.6.0-rc3"},
+      {:arc_ecto, "~> 0.5.0-rc1"},
+
+      # If using Amazon S3:
+      {:ex_aws, "~> 1.0.0-rc3"},
+      {:hackney, "~> 1.5"},
+      {:poison, "~> 2.0"},
+      {:sweet_xml, "~> 0.5"},
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
