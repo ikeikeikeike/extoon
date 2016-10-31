@@ -22,6 +22,8 @@ erl_crash.dump
 # Alternatively, you may comment the line below and commit the
 # secrets file as long as you replace its contents by environment
 # variables.
+/.hg
+/.hgignore
 
 /*.secret.*
 /config/*.secret.*
