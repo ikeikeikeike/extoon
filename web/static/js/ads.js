@@ -25,7 +25,6 @@ $(function() {
       });
     }
 
-    debugger
     search('猫');
 
 

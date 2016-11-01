@@ -52,6 +52,8 @@ defmodule Extoon.Web do
       import Extoon.Router.Helpers
       import Extoon.ErrorHelpers
       import Extoon.Gettext
+
+      import CommonDeviceDetector.Detector
     end
   end
 

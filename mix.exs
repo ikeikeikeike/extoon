@@ -27,7 +27,9 @@ defmodule Extoon.Mixfile do
        :arc_ecto,
        :ex_aws,
        :hackney,
-       :poison
+       :poison,
+
+       :common_device_detector,
      ]]
   end
 
@@ -58,6 +60,9 @@ defmodule Extoon.Mixfile do
       {:hackney, "~> 1.5"},
       {:poison, "~> 2.0"},
       {:sweet_xml, "~> 0.5"},
+
+      {:yamerl, "~> 0.3", override: true},
+      {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
     ]
   end
 

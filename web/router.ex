@@ -10,13 +10,13 @@ defmodule Extoon.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "txt", "text", "xml"]
   end
 
   scope "/", Extoon do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    get "/", HomeController, :index
   end
 
   # Other scopes may use custom stacks.

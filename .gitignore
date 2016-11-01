@@ -27,6 +27,7 @@ erl_crash.dump
 
 /*.secret.*
 /config/*.secret.*
+/config/ua_inspector/
 
 /web/static/js
 /web/static/css
