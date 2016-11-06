@@ -10,10 +10,10 @@ defmodule Extoon.Crawl do
   end
 
   @doc """
-  Builds a changeset based on the `struct` and `params`.
+  Builds a changeset based on the `st` and `params`.
   """
-  def changeset(struct, params \\ %{}) do
-    struct
+  def changeset(st, params \\ %{}) do
+    st
     |> cast(params, [:state, :name, :info])
     |> validate_required([:state, :name, :info])
   end

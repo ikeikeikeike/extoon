@@ -17,10 +17,10 @@ defmodule Extoon.Maker do
   end
 
   @doc """
-  Builds a changeset based on the `struct` and `params`.
+  Builds a changeset based on the `st` and `params`.
   """
-  def changeset(struct, params \\ %{}) do
-    struct
+  def changeset(st, params \\ %{}) do
+    st
     |> cast(params, [:name], [:identifier, :alias, :kana, :romaji, :gyou, :url, :outline])
     |> validate_required([:name])
   end
