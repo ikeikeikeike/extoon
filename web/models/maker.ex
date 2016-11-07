@@ -4,7 +4,6 @@ defmodule Extoon.Maker do
   schema "makers" do
     has_many :entries, Extoon.Entry
 
-    field :identifier, :integer
     field :name, :string
     field :alias, :string
     field :kana, :string

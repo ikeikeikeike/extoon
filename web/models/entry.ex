@@ -11,6 +11,8 @@ defmodule Extoon.Entry do
     has_many :embeds, Extoon.EntryEmbed, foreign_key: :assoc_id, on_delete: :delete_all
     has_many :thumbs, {"entries_thumbs", Extoon.Thumb}, foreign_key: :assoc_id, on_delete: :delete_all
 
+    many_to_many :tags, Extoon.Tag, join_through: "entries_tags"
+
     field :title, :string
     field :content, :string
     field :seo_title, :string
@@ -26,16 +28,20 @@ defmodule Extoon.Entry do
     timestamps()
   end
 
+  @requires ~w(url title)
+  @options ~w(
+    maker_id category_id series_id label_id
+    content seo_title seo_content published_at
+  )a
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(st, params \\ %{}) do
-    chset =
-      st
-      |> cast(params, [:url, :title], [:content, :seo_title, :seo_content, :published_at, :maker_id])
-      |> validate_required([:url, :title])
-      |> validate_format(:url, ~r/^https?:\/\//)
-
+    st
+    |> cast(params, @requires, @options)
+    |> validate_required(@requires)
+    |> validate_format(:url, ~r/^https?:\/\//)
   end
 
   def thumbs_changeset(st, params \\ %{}) do

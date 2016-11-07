@@ -4,7 +4,6 @@ defmodule Extoon.Label do
   schema "labels" do
     has_many :entries, Extoon.Entry
 
-    field :identifier, :integer
     field :name, :string
     field :alias, :string
     field :kana, :string

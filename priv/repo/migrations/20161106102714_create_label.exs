@@ -3,8 +3,6 @@ defmodule Extoon.Repo.Migrations.CreateLabel do
 
   def change do
     create table(:labels) do
-      add :identifier, :integer
-
       add :name, :string
       add :alias, :string
       add :kana, :string

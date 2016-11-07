@@ -3,8 +3,6 @@ defmodule Extoon.Repo.Migrations.CreateMaker do
 
   def change do
     create table(:makers) do
-      add :identifier, :integer
-
       add :name, :string
       add :alias, :string
       add :kana, :string
