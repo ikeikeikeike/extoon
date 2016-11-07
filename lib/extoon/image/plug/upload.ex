@@ -1,7 +1,6 @@
 defmodule Extoon.Image.Plug.Upload do
   require Logger
-
-  @agents Application.get_env(:extoon, :user_agents)
+  alias Extoon.Http.Client.Plugupload
 
   def make_plug!(filename) do
     basename = Path.basename URI.parse(filename).path
@@ -15,8 +14,7 @@ defmodule Extoon.Image.Plug.Upload do
   end
 
   defp recursive_request!(filename, retry \\ 10) do
-    opts = [{"User-agent", @agents[:image]}, {"connect_timeout", 30}]
-    case HTTPoison.get(filename, opts) do
+    case Plugupload.get(filename) do
       {:error, reason} ->
         Logger.warn "#{inspect reason}"
 
