@@ -1,9 +1,9 @@
 defmodule Extoon.Builders.Crawl do
   import Ecto.Query, only: [from: 2]
+  import Extoon.Blank, only: [blank?: 1]
 
   alias Extoon.Repo
-  alias Extoon.Entry
-  alias Extoon.Category
+  alias Extoon.{Entry, Maker, Label, Series, Category, Tag, Thumb}
   alias Extoon.Http.Client.Findinfo
 
   def run, do: run []
@@ -26,7 +26,7 @@ defmodule Extoon.Builders.Crawl do
     |> Enum.map(fn entry ->
       case Findinfo.get(entry.title) do
         {:ok, res} ->
-          {entry, res}
+          {entry, res.body}
 
         {_, _res} ->
           struct(entry, [updated_at: Ecto.DateTime.utc])
@@ -34,63 +34,156 @@ defmodule Extoon.Builders.Crawl do
           nil
       end
     end)
-    |> Enum.filter(fn resrc ->
-      !! resrc
-    end)
-  end
-
-  def set_resource(resrces) when is_list(resrces) do
-    set_resource :category, resrces
-    set_resource :maker, resrces
-    set_resource :label, resrces
-    set_resource :series, resrces
-    set_resource :image, resrces
-  end
-  @labels Application.get_env(:extoon, :labels)
-  def set_resource(:category, resrces) when is_list(resrces) do
-    Enum.map(resrces, fn {entry, res} ->
-      with {name, items} when length(items) > 0 <- {@labels[:third], Findinfo.third(res.body)},
-           {name, items} when length(items) > 0 <- {@labels[:anime], Findinfo.anime(res.body)},
-           {name, items} when length(items) > 0 <- {@labels[:doujin], Findinfo.doujin(res.body)} do
-
-        result =
-          case get_or_changeset(%Category{}, %{name: name}) do
-            %Category{} = cate ->
-              {:ok, cate}
-
-            changeset ->
-              Repo.insert changeset
-          end
-
-        case result do
-          {:ok, cate} ->
-            {%{entry | category_id: cate.id}, items}
-
-          _ ->
-            nil
-        end
+    |> Enum.filter(& !!&1)
+    |> Enum.map(fn {entry, res} ->
+      with items when length(items) > 0 <- Findinfo.third(res.body),
+           items when length(items) > 0 <- Findinfo.anime(res.body),
+           items when length(items) > 0 <- Findinfo.doujin(res.body)
+      do
+        {entry, items}
       else
         nil
       end
     end)
     |> Enum.filter(& !!&1)
   end
-  def set_resource(:maker, resrces) when is_list(resrces) do
-    Enum.map resrces, fn {entry, res} ->
-      Findinfo.maker(res.body)
+
+  def set_resource(resrces) when is_list(resrces) do
+    resrces
+    |> set_resource(:category)
+    |> set_resource(:content)
+    |> set_resource(:maker)
+    |> set_resource(:image)
+    |> set_resource(:tags)
+    |> set_resource(:label)
+    |> set_resource(:series)
+    |> set_resource(:duration)
+    |> set_resource(:release_date)
+  end
+  def set_resource(%{} = st, %Entry{} = entry, items, name) do
+    # Creates or updates record inside of a model
+    result =
+      case get_or_changeset(st, %{name: name}) do
+        st = model ->
+          {:ok, model}
+
+        changeset ->
+          Repo.insert changeset
+      end
+
+    # Sets something inside of Entry model.
+    case result do
+      {:ok, model} ->
+        {Map.put(entry, :"#{Funcs.thename(st)}_id", model.id), items}
+      _ ->
+        nil
     end
   end
-  def set_resource(:label, resrces) when is_list(resrces) do
-    Findinfo.label
-
+  # must be setting
+  @labels Application.get_env(:extoon, :labels)
+  def set_resource(resrces, :category) when is_list(resrces) do
+    Enum.map(resrces, fn {entry, items} ->
+      with {name, items} when length(items) > 0 <- {@labels[:third], Findinfo.third(items)},
+           {name, items} when length(items) > 0 <- {@labels[:anime], Findinfo.anime(items)},
+           {name, items} when length(items) > 0 <- {@labels[:doujin], Findinfo.doujin(items)}
+      do
+        set_resource %Category{}, entry, items, name
+      else
+        nil
+      end
+    end)
+    |> Enum.filter(& !!&1)
   end
-  def set_resource(:series, resrces) when is_list(resrces) do
-    Findinfo.series
-
+  # must be setting
+  def set_resource(resrces, :content) when is_list(resrces) do
+    Enum.map(resrces, fn {entry, items} ->
+      case List.first(Findinfo.content(items)) do
+        nil ->
+          nil
+        content ->
+          {Map.put(entry, :content, content), items}
+      end
+    end)
+    |> Enum.filter(& !!&1)
   end
-  def set_resource(:image, resrces) when is_list(resrces) do
-    Findinfo.imageURL
-
+  # must be setting
+  def set_resource(resrces, :maker) when is_list(resrces) do
+    Enum.map(resrces, fn {entry, items} ->
+      case List.first(Findinfo.maker(items)) do
+        nil ->
+          nil
+        name ->
+          set_resource %Maker{}, entry, items, name
+      end
+    end)
+    |> Enum.filter(& !!&1)
+  end
+  # must be setting
+  def set_resource(resrces, :image) when is_list(resrces) do
+    Enum.map(resrces, fn {entry, items} ->
+      case Findinfo.imageURL(items) do
+        [] ->
+          nil
+        urls ->
+          set_resource %Thumb{}, entry, items, urls
+      end
+    end)
+    |> Enum.filter(& !!&1)
+  end
+  # Be able to prefer Success either Failure.
+  def set_resource(resrces, :tags) when is_list(resrces) do
+    Enum.map(resrces, fn {entry, items} ->
+      case Findinfo.genre(items) do
+        nil ->
+          {entry, items}
+        tags ->
+          set_resource %Tag{}, entry, items, tags
+      end
+    end)
+  end
+  # Be able to prefer Success either Failure.
+  def set_resource(resrces, :label) when is_list(resrces) do
+    Enum.map(resrces, fn {entry, items} ->
+      case List.first(Findinfo.label(items)) do
+        nil ->
+          {entry, items}
+        name ->
+          set_resource %Label{}, entry, items, name
+      end
+    end)
+  end
+  # Be able to prefer Success either Failure.
+  def set_resource(resrces, :series) when is_list(resrces) do
+    Enum.map(resrces, fn {entry, items} ->
+      case List.first(Findinfo.series(items)) do
+        nil ->
+          {entry, items}
+        name ->
+          set_resource %Series{}, entry, items, name
+      end
+    end)
+  end
+  # Be able to prefer Success either Failure.
+  def set_resource(resrces, :duration) when is_list(resrces) do
+    Enum.map(resrces, fn {entry, items} ->
+      case List.first(Findinfo.minutes(items)) do
+        nil ->
+          {entry, items}
+        number ->
+          {Map.put(entry, :duration, number), items}
+      end
+    end)
+  end
+  # Be able to prefer Success either Failure.
+  def set_resource(resrces, :release_date) when is_list(resrces) do
+    Enum.map(resrces, fn {entry, items} ->
+      case List.first(Findinfo.release(items)) do
+        nil ->
+          {entry, items}
+        date ->
+          {Map.put(entry, :release_date, date), items}
+      end
+    end)
   end
 
   def valid(resrces) when is_list(resrces) do
@@ -101,15 +194,14 @@ defmodule Extoon.Builders.Crawl do
 
   end
 
-  def get_or_changeset(mod, queryables) when is_list(queryables),
-    do: Enum.map queryables, &get_or_changeset(mod, &1)
-  def get_or_changeset(mod, queryable) do
-    case Repo.get_by(mod, queryable) do
+  def get_or_changeset(%{} = st, queryables) when is_list(queryables),
+    do: Enum.map queryables, &get_or_changeset(st, &1)
+  def get_or_changeset(%{} = st, queryable) do
+    case Repo.get_by(st, queryable) do
       nil ->
-        apply mod, :changeset, [mod.__struct__, queryable]
+        apply st, :changeset, [st.__struct__, queryable]
       model ->
         model
     end
   end
-
 end

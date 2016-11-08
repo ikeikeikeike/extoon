@@ -15,12 +15,15 @@ defmodule Extoon.Tag do
     timestamps()
   end
 
+  @requires ~w(name)a
+  @options ~w(kane romaji orig gyou outline)a
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [])
-    |> validate_required([])
+    |> cast(params, @requires, @options)
+    |> validate_required(@requires)
   end
 end

@@ -17,12 +17,15 @@ defmodule Extoon.Thumb do
     timestamps()
   end
 
+  @requires ~w()a
+  @options ~w(assoc_id name ext mime width height)a
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(st, params \\ %{}) do
     st
-    |> cast(params, [], [:assoc_id, :name, :ext, :mime, :width, :height])
+    |> cast(params, [], @options)
     |> cast_attachments(params, [:src])
     |> validate_required([:src])
   end

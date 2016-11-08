@@ -15,10 +15,8 @@ defmodule Extoon.Entry do
 
     field :title, :string
     field :content, :string
-    field :seo_title, :string
-    field :seo_content, :string
-
     field :duration, :integer
+    field :release_date, Ecto.Date
 
     # field :review, :boolean, default: false
     # field :removal, :boolean, default: false
@@ -28,7 +26,7 @@ defmodule Extoon.Entry do
     timestamps()
   end
 
-  @requires ~w(url title)
+  @requires ~w(url title)a
   @options ~w(
     maker_id category_id series_id label_id
     content seo_title seo_content published_at

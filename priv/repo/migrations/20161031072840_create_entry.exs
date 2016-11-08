@@ -10,10 +10,8 @@ defmodule Extoon.Repo.Migrations.CreateEntry do
 
       add :title, :text
       add :content, :text
-      add :seo_title, :text
-      add :seo_content, :text
-
       add :duration, :integer
+      add :release_date, :date
 
       # add :review, :boolean
       # add :removal, :boolean

@@ -1,6 +1,6 @@
 defmodule Extoon.Http.Client.Findinfo do
   use HTTPoison.Base
-  import Exantenna.Funcs, only: [blank?: 1]
+  import Extoon.Blank, only: [blank?: 1]
 
   @agents Application.get_env(:extoon, :user_agents)
   @ignores Application.get_env(:extoon, :ignores)
