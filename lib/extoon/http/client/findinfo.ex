@@ -1,6 +1,7 @@
 defmodule Extoon.Http.Client.Findinfo do
   use HTTPoison.Base
   import Extoon.Blank, only: [blank?: 1]
+  alias Extoon.Http.Client.Scrape
 
   @agents Application.get_env(:extoon, :user_agents)
   @ignores Application.get_env(:extoon, :ignores)
@@ -67,6 +68,35 @@ defmodule Extoon.Http.Client.Findinfo do
     v = v || get_in item, ["imageURL", "list"]
     v = v || get_in item, ["imageURL", "small"]
     v
+  end
+
+  def description(items) when is_list(items) do
+    Enum.map(items, & description &1)
+    |> Enum.filter(& ! blank? &1)
+    |> Enum.uniq
+  end
+  def description(item) do
+    case Scrape.get((item[:URL])) do
+      {:ok, r} ->
+        Scrape.description r.body
+      _ ->
+        nil
+    end
+  end
+
+  def date(items) when is_list(items) do
+    Enum.map(items, & date &1)
+    |> Enum.filter(& &1)
+    |> Enum.uniq
+  end
+  def date(item) do
+    with spl when length(spl) > 0 <- String.split(item["date"] || ""),
+         iso when not is_nil(iso) <- List.first(spl),
+         {:ok, date}              <- Date.from_iso8601(iso) do
+      Ecto.Date.cast! date
+    else
+      nil
+    end
   end
 
   def minutes(items) when is_list(items) do

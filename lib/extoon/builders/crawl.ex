@@ -84,10 +84,9 @@ defmodule Extoon.Builders.Crawl do
   @labels Application.get_env(:extoon, :labels)
   def set_resource(resrces, :category) when is_list(resrces) do
     Enum.map(resrces, fn {entry, items} ->
-      with
-        {name, items} when length(items) > 0 <- {@labels[:third], Findinfo.third(items)},
-        {name, items} when length(items) > 0 <- {@labels[:anime], Findinfo.anime(items)},
-        {name, items} when length(items) > 0 <- {@labels[:doujin], Findinfo.doujin(items)}
+      with {name, items} when length(items) > 0 <- {@labels[:third], Findinfo.third(items)},
+           {name, items} when length(items) > 0 <- {@labels[:anime], Findinfo.anime(items)},
+           {name, items} when length(items) > 0 <- {@labels[:doujin], Findinfo.doujin(items)}
       do
         set_resource %Category{}, entry, items, name
       else
@@ -99,7 +98,7 @@ defmodule Extoon.Builders.Crawl do
   # must be setting
   def set_resource(resrces, :content) when is_list(resrces) do
     Enum.map(resrces, fn {entry, items} ->
-      case List.first(Findinfo.content(items)) do
+      case List.first(Findinfo.description(items)) do
         nil ->
           nil
         content ->
@@ -183,7 +182,7 @@ defmodule Extoon.Builders.Crawl do
   # Be able to prefer Success either Failure.
   def set_resource(resrces, :release_date) when is_list(resrces) do
     Enum.map(resrces, fn {entry, items} ->
-      case List.first(Findinfo.release(items)) do
+      case List.first(Findinfo.date(items)) do
         nil ->
           {entry, items}
         date ->

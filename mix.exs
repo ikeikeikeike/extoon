@@ -31,6 +31,8 @@ defmodule Extoon.Mixfile do
 
        :exsentry,
        :common_device_detector,
+
+       :floki,
      ]]
   end
 
@@ -65,6 +67,7 @@ defmodule Extoon.Mixfile do
       {:yamerl, "~> 0.3", override: true},
       {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
       {:exsentry, "~> 0.7"},
+      {:floki, "~> 0.11"},
     ]
   end
 
