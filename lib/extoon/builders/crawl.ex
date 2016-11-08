@@ -14,11 +14,13 @@ defmodule Extoon.Builders.Crawl do
         where: q.publish == false,
         order_by: q.updated_at
 
-    queryable
-    |> make_resource
-    |> set_resource
-    |> valid
-    |> update
+    ExSentry.capture_exceptions fn ->
+      queryable
+      |> make_resource
+      |> set_resource
+      |> valid
+      |> update
+    end
   end
 
   def make_resource(queryable) do
@@ -186,7 +188,7 @@ defmodule Extoon.Builders.Crawl do
         nil ->
           {entry, items}
         date ->
-          {Map.put(entry, :release_date, date), items}
+          {Map.put(entry, :release_date, Ecto.Date.cast!(date)), items}
       end
     end)
   end

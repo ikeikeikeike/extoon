@@ -93,7 +93,7 @@ defmodule Extoon.Http.Client.Findinfo do
     with spl when length(spl) > 0 <- String.split(item["date"] || ""),
          iso when not is_nil(iso) <- List.first(spl),
          {:ok, date}              <- Date.from_iso8601(iso) do
-      Ecto.Date.cast! date
+      date
     else
       nil
     end
