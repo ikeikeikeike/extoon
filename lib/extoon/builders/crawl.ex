@@ -3,6 +3,7 @@ defmodule Extoon.Builders.Crawl do
   import Extoon.Blank, only: [blank?: 1]
 
   alias Extoon.Repo
+  alias Extoon.Funcs
   alias Extoon.{Entry, Maker, Label, Series, Category, Tag, Thumb}
   alias Extoon.Http.Client.Findinfo
 
@@ -83,9 +84,10 @@ defmodule Extoon.Builders.Crawl do
   @labels Application.get_env(:extoon, :labels)
   def set_resource(resrces, :category) when is_list(resrces) do
     Enum.map(resrces, fn {entry, items} ->
-      with {name, items} when length(items) > 0 <- {@labels[:third], Findinfo.third(items)},
-           {name, items} when length(items) > 0 <- {@labels[:anime], Findinfo.anime(items)},
-           {name, items} when length(items) > 0 <- {@labels[:doujin], Findinfo.doujin(items)}
+      with
+        {name, items} when length(items) > 0 <- {@labels[:third], Findinfo.third(items)},
+        {name, items} when length(items) > 0 <- {@labels[:anime], Findinfo.anime(items)},
+        {name, items} when length(items) > 0 <- {@labels[:doujin], Findinfo.doujin(items)}
       do
         set_resource %Category{}, entry, items, name
       else
@@ -125,7 +127,10 @@ defmodule Extoon.Builders.Crawl do
         [] ->
           nil
         urls ->
-          set_resource %Thumb{}, entry, items, urls
+          thumbs = Enum.map(urls, fn url ->
+            %{src: Extoon.Image.Plug.Upload.make_plug!(url)}
+          end)
+          {Map.put(entry, :thumbs, thumbs), items}
       end
     end)
     |> Enum.filter(& !!&1)
@@ -136,8 +141,9 @@ defmodule Extoon.Builders.Crawl do
       case Findinfo.genre(items) do
         nil ->
           {entry, items}
-        tags ->
-          set_resource %Tag{}, entry, items, tags
+        genres ->
+          tags = Enum.map(genres, & %{name: &1})
+          {Map.put(entry, :tags, tags), items}
       end
     end)
   end
@@ -187,11 +193,17 @@ defmodule Extoon.Builders.Crawl do
   end
 
   def valid(resrces) when is_list(resrces) do
-
   end
 
   def update(resrces) when is_list(resrces) do
-
+    Enum.each resrces, fn {entry, _items} ->
+      Repo.transaction fn ->
+        case Repo.update(entry) do
+          {:ok, _model} -> nil
+          {_, err} -> ExSentry.capture_exception(err)
+        end
+      end
+    end
   end
 
   def get_or_changeset(%{} = st, queryables) when is_list(queryables),

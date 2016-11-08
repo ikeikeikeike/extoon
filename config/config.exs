@@ -25,6 +25,10 @@ config :logger, :console,
 config :ua_inspector,
   database_path: Path.join(File.cwd!, "config/ua_inspector")
 
+config :exsentry,
+  otp_app: :extoon,
+  dsn: ""
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
