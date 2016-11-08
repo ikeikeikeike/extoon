@@ -78,7 +78,7 @@ defmodule Extoon.Http.Client.Findinfo do
   def description(item) do
     case Scrape.get((item[:URL])) do
       {:ok, r} ->
-        Scrape.description r.body
+        Scrape.description :dmm, r.body
       _ ->
         nil
     end
