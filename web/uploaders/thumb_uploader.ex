@@ -20,11 +20,11 @@ defmodule Extoon.ThumbUploader do
     [content_type: Plug.MIME.path(file.file_name)] # for "image.png", would produce: "image/png"
   end
 
-  # def __storage, do: Arc.Storage.Local
+  def __storage, do: Arc.Storage.Local
   # def __storage, do: Arc.Storage.S3
 
   def filename(version, {file, model}) do
-    "#{model.entry_id}_#{version}_#{file.file_name}"
+    "#{model.assoc_id}_#{version}_#{file.file_name}"
   end
 
   def storage_dir(_version, {_file, model}) do
@@ -35,7 +35,7 @@ defmodule Extoon.ThumbUploader do
       |> String.split(".")
       |> List.last
 
-    "uploads/#{dirname}/#{model.entry_id}"
+    "uploads/#{dirname}/#{model.assoc_id}"
   end
 
   def default_url(:original) do

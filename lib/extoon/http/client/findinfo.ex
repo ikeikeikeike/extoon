@@ -76,7 +76,7 @@ defmodule Extoon.Http.Client.Findinfo do
     |> Enum.uniq
   end
   def description(item) do
-    case Scrape.get((item[:URL])) do
+    case Scrape.get(item["URL"]) do
       {:ok, r} ->
         Scrape.description :dmm, r.body
       _ ->

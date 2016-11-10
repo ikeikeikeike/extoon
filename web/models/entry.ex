@@ -26,10 +26,11 @@ defmodule Extoon.Entry do
     timestamps()
   end
 
-  @requires ~w(url title)a
+  @requires ~w(title)a
   @options ~w(
     maker_id category_id series_id label_id
-    content seo_title seo_content published_at
+    content duration release_date
+    publish published_at updated_at
   )a
 
   @doc """
@@ -39,14 +40,22 @@ defmodule Extoon.Entry do
     st
     |> cast(params, @requires, @options)
     |> validate_required(@requires)
-    |> validate_format(:url, ~r/^https?:\/\//)
   end
 
-  def thumbs_changeset(st, params \\ %{}) do
-    # Extoon.Image.Plug.Upload.make_plug!
+  @expected_info ~w(
+    maker_id category_id series_id label_id
+    title content duration release_date
+    tags thumbs
+  )a
+  def expected_info, do: @expected_info
 
+  @doc """
+  Builds a changeset based on the `struct` and `params`.
+  """
+  def info_changeset(st, params \\ %{}) do
     st
     |> changeset(params)
+    |> put_assoc(:tags, params[:tags])
     |> cast_assoc(:thumbs, required: true)
   end
 

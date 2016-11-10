@@ -20,7 +20,7 @@ defmodule Extoon.Maker do
   """
   def changeset(st, params \\ %{}) do
     st
-    |> cast(params, [:name], [:identifier, :alias, :kana, :romaji, :gyou, :url, :outline])
+    |> cast(params, [:name], [:alias, :kana, :romaji, :gyou, :url, :outline])
     |> validate_required([:name])
   end
 end

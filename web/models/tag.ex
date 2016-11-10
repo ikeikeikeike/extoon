@@ -7,7 +7,6 @@ defmodule Extoon.Tag do
     field :name, :string
     field :kana, :string
     field :romaji, :string
-    field :orig, :string
     field :gyou, :string
 
     field :outline, :string
@@ -16,7 +15,7 @@ defmodule Extoon.Tag do
   end
 
   @requires ~w(name)a
-  @options ~w(kane romaji orig gyou outline)a
+  @options ~w(alias kane romaji gyou outline)a
 
   @doc """
   Builds a changeset based on the `struct` and `params`.

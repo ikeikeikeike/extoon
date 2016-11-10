@@ -38,6 +38,7 @@ erl_crash.dump
 
 /log
 /tags
+/uploads
 
 /BUILDING
 /PRODUCTION

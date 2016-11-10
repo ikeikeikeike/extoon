@@ -10,7 +10,7 @@ defmodule Extoon.Http.Client.Scrape do
 
   def description(:dmm, html) do
     html
-    |> Floki.find("")
+    |> Floki.find(".mg-b20.lh4 p.mg-b20")
     |> Floki.text
   end
 
