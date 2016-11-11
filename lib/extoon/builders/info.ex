@@ -227,7 +227,7 @@ defmodule Extoon.Builders.Info do
   end
 
   defp setback(st, err) do
-    Logger.warn "Setback #{inspect err}: #{inspect st}"
+    Logger.warn "Setback\nErr:#{inspect err}\nSt:#{inspect st}"
 
     Repo.rollback(st)
     ExSentry.capture_exception(err)
@@ -235,7 +235,7 @@ defmodule Extoon.Builders.Info do
 
   defp skip(%Entry{} = st), do: skip st, ""
   defp skip(%Entry{} = st, msg) do
-    Logger.warn "Skip #{inspect msg}: #{inspect st}"
+    Logger.warn "Skip\nMsg:#{inspect msg}\nSt:#{inspect st}"
 
     st
     |> Entry.changeset(%{updated_at: Ecto.DateTime.utc})

@@ -24,7 +24,10 @@ defmodule Extoon.ThumbUploader do
   # def __storage, do: Arc.Storage.S3
 
   def filename(version, {file, model}) do
-    "#{model.assoc_id}_#{version}_#{file.file_name}"
+    fname = file.file_name
+    fname = String.replace(fname, Path.extname(fname), "")
+
+    "#{version}_#{fname}"
   end
 
   def storage_dir(_version, {_file, model}) do

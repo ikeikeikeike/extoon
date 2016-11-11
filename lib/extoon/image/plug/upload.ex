@@ -2,19 +2,30 @@ defmodule Extoon.Image.Plug.Upload do
   require Logger
   alias Extoon.Http.Client.Plugupload
 
-  def make_plug!(filename) do
-    basename = Path.basename URI.parse(filename).path
+  def make_plug!(uri, opts \\ []) do
+    r = recursive_request!(uri)
 
-    resp = recursive_request!(filename)
+    basename = Path.basename URI.parse(uri).path
+    filename =
+      case opts[:orig] do
+        true ->
+          basename
+        _ ->
+          hashstring =
+            :erlang.md5(r.body)
+            |> Base.encode16(case: :lower)
 
-    path = "/tmp/#{basename}"
-    File.write!(path, resp.body)
+          hashstring <> Path.extname(basename)
+      end
 
-    %Plug.Upload{path: path, filename: basename}
+    path = "/tmp/#{filename}"
+    File.write!(path, r.body)
+
+    %Plug.Upload{path: path, filename: filename}
   end
 
-  defp recursive_request!(filename, retry \\ 10) do
-    case Plugupload.get(filename) do
+  defp recursive_request!(uri, retry \\ 10) do
+    case Plugupload.get(uri) do
       {:error, reason} ->
         Logger.warn "#{inspect reason}"
 
@@ -22,10 +33,10 @@ defmodule Extoon.Image.Plug.Upload do
           throw(reason)
         end
 
-        filename
+        uri
         |> recursive_request!(retry - 1)
 
-      {_, resp} -> resp
+      {_, r} -> r
     end
   end
 
