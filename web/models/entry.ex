@@ -7,11 +7,13 @@ defmodule Extoon.Entry do
     belongs_to :series, Extoon.Series
     belongs_to :category, Extoon.Category
 
+    has_one :info, {"entries_infos", Extoon.Info}, foreign_key: :assoc_id, on_delete: :delete_all, on_replace: :delete
+
     has_many :urls, Extoon.EntryUrl, foreign_key: :assoc_id, on_delete: :delete_all
     has_many :embeds, Extoon.EntryEmbed, foreign_key: :assoc_id, on_delete: :delete_all
-    has_many :thumbs, {"entries_thumbs", Extoon.Thumb}, foreign_key: :assoc_id, on_delete: :delete_all
+    has_many :thumbs, {"entries_thumbs", Extoon.Thumb}, foreign_key: :assoc_id, on_delete: :delete_all, on_replace: :delete
 
-    many_to_many :tags, Extoon.Tag, join_through: "entries_tags"
+    many_to_many :tags, Extoon.Tag, join_through: "entries_tags", on_delete: :delete_all, on_replace: :delete
 
     field :title, :string
     field :content, :string
@@ -42,13 +44,6 @@ defmodule Extoon.Entry do
     |> validate_required(@requires)
   end
 
-  @expected_info ~w(
-    maker_id category_id series_id label_id
-    title content duration release_date
-    tags thumbs
-  )a
-  def expected_info, do: @expected_info
-
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
@@ -57,6 +52,7 @@ defmodule Extoon.Entry do
     |> changeset(params)
     |> put_assoc(:tags, params[:tags])
     |> cast_assoc(:thumbs, required: true)
+    # |> cast_assoc(:info, required: true)
   end
 
   def released(query),             do: from p in query, where: p.publish == true

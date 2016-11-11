@@ -20,5 +20,6 @@ defmodule Extoon.Category do
     st
     |> cast(params, [:name], [:alias, :kana, :romaji, :gyou])
     |> validate_required([:name])
+    |> unique_constraint(:name)
   end
 end

@@ -22,5 +22,6 @@ defmodule Extoon.Maker do
     st
     |> cast(params, [:name], [:alias, :kana, :romaji, :gyou, :url, :outline])
     |> validate_required([:name])
+    |> unique_constraint(:name)
   end
 end

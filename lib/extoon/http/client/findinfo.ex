@@ -1,6 +1,6 @@
 defmodule Extoon.Http.Client.Findinfo do
   use HTTPoison.Base
-  import Extoon.Blank, only: [blank?: 1]
+  import Extoon.Checks, only: [present?: 1]
   alias Extoon.Http.Client.Scrape
 
   @agents Application.get_env(:extoon, :user_agents)
@@ -8,11 +8,11 @@ defmodule Extoon.Http.Client.Findinfo do
   @endpoint Application.get_env(:extoon, :crawl)
 
   def process_url(keyword) do
-    @endpoint[:dmm][:findinfo] <> keyword
+    @endpoint[:dms][:findinfo] <> keyword
   end
 
   def process_request_headers(headers) do
-    [{"User-Agent", @agents[:dmm]} | headers]
+    [{"User-Agent", @agents[:dms]} | headers]
   end
 
   def process_response_body(body) do
@@ -37,6 +37,7 @@ defmodule Extoon.Http.Client.Findinfo do
   def take(%{"service_code" => service_code, "floor_code" => floor_code} = item, service, floor) do
     if service_code == "#{service}" && floor_code == "#{floor}", do: item, else: nil
   end
+  def take(%{} = item, service, floor), do: nil
 
   def anime(items) do
     v = take items, :digital, :anime
@@ -51,7 +52,7 @@ defmodule Extoon.Http.Client.Findinfo do
   def third(items) do
     anime(items) ++ doujin(items)
     |> Enum.filter(fn item ->
-      Enum.map(genre(item), fn tag ->
+      Enum.map(genre([item]), fn tag ->
         String.starts_with?(tag, ["3D", "3d"])
       end)
       |> Enum.any?
@@ -60,7 +61,7 @@ defmodule Extoon.Http.Client.Findinfo do
 
   def imageURL(items) when is_list(items) do
     Enum.map(items, & imageURL &1)
-    |> Enum.filter(& ! blank? &1)
+    |> Enum.filter(& present? &1)
     |> Enum.uniq
   end
   def imageURL(item) do
@@ -72,13 +73,13 @@ defmodule Extoon.Http.Client.Findinfo do
 
   def description(items) when is_list(items) do
     Enum.map(items, & description &1)
-    |> Enum.filter(& ! blank? &1)
+    |> Enum.filter(& present? &1)
     |> Enum.uniq
   end
   def description(item) do
     case Scrape.get(item["URL"]) do
       {:ok, r} ->
-        Scrape.description :dmm, r.body
+        Scrape.description :dms, r.body
       _ ->
         nil
     end
@@ -113,9 +114,11 @@ defmodule Extoon.Http.Client.Findinfo do
 
   @re_genre ~r/(#{Enum.join @ignores[:genre], "|"})/ui
   def genre(items) when is_list(items) do
-    Enum.flat_map(items, & genre &1)
+    Enum.map(items, & genre &1)
+    |> List.flatten
+    |> Enum.filter(& !!&1)
     |> Enum.filter(fn name ->
-      !blank?(name) && !String.match?(name, @re_genre)
+      present?(name) && !(name =~ @re_genre)
     end)
     |> Enum.uniq
   end

@@ -1,19 +1,22 @@
 defmodule Extoon.Builders.Info do
   import Ecto.Query, only: [from: 2]
-  import Extoon.Blank, only: [blank?: 1]
 
   alias Extoon.{Repo, Funcs}
   alias Extoon.{Entry, Maker, Label, Series, Category, Tag, Thumb}
   alias Extoon.Ecto.Q
   alias Extoon.Http.Client.Findinfo
 
+  require Logger
+
   def run, do: run []
   def run([]) do
     queryable =
       from q in Entry,
-        where: q.publish == false,
+        where: q.publish == false
+           and is_nil(q.maker_id)
+           and is_nil(q.category_id),
         order_by: q.updated_at,
-        limit: 10
+        limit: 1
 
     # ExSentry.capture_exceptions fn ->
       queryable
@@ -32,7 +35,7 @@ defmodule Extoon.Builders.Info do
           {entry, res.body, %{}}
 
         {_, _res} ->
-          skip entry
+          skip entry, "resource 1"
       end
     end)
     |> Enum.filter(& !!&1)
@@ -41,7 +44,7 @@ defmodule Extoon.Builders.Info do
            r when length(r) < 1 <- Findinfo.anime(items),
            r when length(r) < 1 <- Findinfo.doujin(items)
       do
-        skip entry
+        skip entry, "resource 2"
       else
         r -> {entry, r, params}
       end
@@ -80,14 +83,14 @@ defmodule Extoon.Builders.Info do
     end
   end
   # must be setting
-  @labels Application.get_env(:extoon, :labels)
+  @categories Application.get_env(:extoon, :categories)
   def set_resource(resrces, :category) when is_list(resrces) do
     Enum.map(resrces, fn {entry, items, params} ->
-      with {name, r} when length(r) < 1 <- {@labels[:third], Findinfo.third(items)},
-           {name, r} when length(r) < 1 <- {@labels[:anime], Findinfo.anime(items)},
-           {name, r} when length(r) < 1 <- {@labels[:doujin], Findinfo.doujin(items)}
+      with {name, r} when length(r) < 1 <- {@categories[:third], Findinfo.third(items)},
+           {name, r} when length(r) < 1 <- {@categories[:anime], Findinfo.anime(items)},
+           {name, r} when length(r) < 1 <- {@categories[:doujin], Findinfo.doujin(items)}
       do
-        skip entry
+        skip entry, "category"
       else
         {name, r} ->
           set_resource %Category{}, entry, params, r, name
@@ -100,7 +103,7 @@ defmodule Extoon.Builders.Info do
     Enum.map(resrces, fn {entry, items, params} ->
       case List.first(Findinfo.description(items)) do
         nil ->
-          skip entry
+          skip entry, "content"
         content ->
           {entry, items, Map.put(params, :content, content)}
       end
@@ -112,7 +115,7 @@ defmodule Extoon.Builders.Info do
     Enum.map(resrces, fn {entry, items, params} ->
       case List.first(Findinfo.maker(items)) do
         nil ->
-          skip entry
+          skip entry, "maker"
         name ->
           set_resource %Maker{}, entry, params, items, name
       end
@@ -124,7 +127,7 @@ defmodule Extoon.Builders.Info do
     Enum.map(resrces, fn {entry, items, params} ->
       case Findinfo.imageURL(items) do
         [] ->
-          skip entry
+          skip entry, "image"
         urls ->
           thumbs = Enum.map(urls, fn url ->
             %{src: Extoon.Image.Plug.Upload.make_plug!(url), assoc_id: entry.id}
@@ -141,7 +144,10 @@ defmodule Extoon.Builders.Info do
         nil ->
           {entry, items, params}
         genres ->
-          tags = Enum.map(genres, & %{name: &1})
+          tags =
+            Enum.map(Enum.uniq(genres), fn name ->
+              Q.get_or_changeset(%Tag{}, %{name: name})
+            end)
           {entry, items, Map.put(params, :tags, tags)}
       end
     end)
@@ -193,33 +199,47 @@ defmodule Extoon.Builders.Info do
 
   def update(resrces) when is_list(resrces) do
     result =
-      Enum.map resrces, fn {entry, _items, params} ->
+      Enum.map resrces, fn {entry, items, params} ->
+        # params =
+          # Map.put(params, :info, %{info: items, assoc_id: entry.id})
+
         changeset =
           Entry.info_changeset Repo.preload(entry, [:tags, :thumbs]), params
+
+          # Entry.info_changeset Repo.preload(entry, [:tags, :thumbs, :info]), params
 
         Repo.transaction fn ->
           try do
             case Repo.update(changeset) do
-              {:ok, _model} -> entry
-              {_, err} -> ExSentry.capture_exception(err)
+              {:ok, entry} -> entry
+              {_, err} -> setback entry, err
             end
           rescue
             err in Postgrex.Error ->
-              Repo.rollback(entry)
-              ExSentry.capture_exception(err)
+              setback entry, err
           end
         end
       end
 
     Enum.each result, fn
       {:error, entry} ->
-        skip entry
+        skip entry, "final"
       _ ->
         nil
     end
   end
 
-  defp skip(%Entry{} = st) do
+  defp setback(st, err) do
+    Logger.warn "Setback #{inspect err}: #{inspect st}"
+
+    Repo.rollback(st)
+    ExSentry.capture_exception(err)
+  end
+
+  defp skip(%Entry{} = st), do: skip st, ""
+  defp skip(%Entry{} = st, msg) do
+    Logger.warn "Skip #{inspect msg}: #{inspect st}"
+
     st
     |> Entry.changeset(%{updated_at: Ecto.DateTime.utc})
     |> Repo.update
