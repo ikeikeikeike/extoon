@@ -11,9 +11,7 @@ defmodule Extoon.Repo.Migrations.CreateCategory do
 
       timestamps()
     end
-    create unique_index(:categories, [:name, :alias], name: :categories_name_alias_index)
-
-    create index(:categories, [:name])
+    create index(:categories, [:name], unique: true)
     create index(:categories, [:gyou])
   end
 end

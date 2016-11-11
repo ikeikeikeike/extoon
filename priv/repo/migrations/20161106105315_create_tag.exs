@@ -13,9 +13,7 @@ defmodule Extoon.Repo.Migrations.CreateTag do
 
       timestamps()
     end
-    create unique_index(:tags, [:name, :alias], name: :tags_name_alias_index)
-
-    create index(:tags, [:name])
+    create index(:tags, [:name], unique: true)
     create index(:tags, [:gyou])
   end
 

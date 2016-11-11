@@ -16,9 +16,7 @@ defmodule Extoon.Repo.Migrations.CreateSeries do
 
       timestamps()
     end
-    create unique_index(:series, [:name, :alias], name: :series_name_alias_index)
-
-    create index(:series, [:name])
+    create index(:series, [:name], unique: true)
     create index(:series, [:gyou])
 
   end

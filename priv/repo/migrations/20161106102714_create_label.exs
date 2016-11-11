@@ -14,9 +14,7 @@ defmodule Extoon.Repo.Migrations.CreateLabel do
 
       timestamps()
     end
-    create unique_index(:labels, [:name, :alias], name: :labels_name_alias_index)
-
-    create index(:labels, [:name])
+    create index(:labels, [:name], unique: true)
     create index(:labels, [:gyou])
 
   end

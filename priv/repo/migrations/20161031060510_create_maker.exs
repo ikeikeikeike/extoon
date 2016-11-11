@@ -14,9 +14,7 @@ defmodule Extoon.Repo.Migrations.CreateMaker do
 
       timestamps()
     end
-    create unique_index(:makers, [:name, :alias], name: :makers_name_alias_index)
-
-    create index(:makers, [:name])
+    create index(:makers, [:name], unique: true)
     create index(:makers, [:gyou])
 
   end
