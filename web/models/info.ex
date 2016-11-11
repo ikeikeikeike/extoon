@@ -3,7 +3,7 @@ defmodule Extoon.Info do
 
   schema "infos" do
     field :assoc_id, :integer
-    field :info, :map
+    field :info, {:array, :map}
 
     timestamps()
   end

@@ -16,7 +16,7 @@ defmodule Extoon.Builders.Info do
            and is_nil(q.maker_id)
            and is_nil(q.category_id),
         order_by: q.updated_at,
-        limit: 1
+        limit: 10
 
     # ExSentry.capture_exceptions fn ->
       queryable
@@ -200,13 +200,10 @@ defmodule Extoon.Builders.Info do
   def update(resrces) when is_list(resrces) do
     result =
       Enum.map resrces, fn {entry, items, params} ->
-        # params =
-          # Map.put(params, :info, %{info: items, assoc_id: entry.id})
-
+        params =
+          Map.put(params, :info, %{info: items, assoc_id: entry.id})
         changeset =
-          Entry.info_changeset Repo.preload(entry, [:tags, :thumbs]), params
-
-          # Entry.info_changeset Repo.preload(entry, [:tags, :thumbs, :info]), params
+          Entry.info_changeset Repo.preload(entry, [:tags, :thumbs, :info]), params
 
         Repo.transaction fn ->
           try do

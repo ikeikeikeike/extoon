@@ -52,7 +52,7 @@ defmodule Extoon.Entry do
     |> changeset(params)
     |> put_assoc(:tags, params[:tags])
     |> cast_assoc(:thumbs, required: true)
-    # |> cast_assoc(:info, required: true)
+    |> cast_assoc(:info, required: true)
   end
 
   def released(query),             do: from p in query, where: p.publish == true
