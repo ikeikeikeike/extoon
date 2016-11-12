@@ -40,13 +40,11 @@ defmodule Extoon.Builders.Info do
     end)
     |> Enum.filter(& !!&1)
     |> Enum.map(fn {entry, items, params} ->
-      with r when length(r) < 1 <- Findinfo.third(items),
-           r when length(r) < 1 <- Findinfo.anime(items),
-           r when length(r) < 1 <- Findinfo.doujin(items)
-      do
-        skip entry, "resource 2"
-      else
-        r -> {entry, r, params}
+      case Findinfo.better_choice(items, entry.title) do
+        r when length(r) > 0 ->
+          {entry, r, params}
+        _ ->
+          skip entry, "resource 2"
       end
     end)
     |> Enum.filter(& !!&1)
@@ -129,7 +127,7 @@ defmodule Extoon.Builders.Info do
         [] ->
           skip entry, "image"
         urls ->
-          thumbs = Enum.map(urls, fn url ->
+          thumbs = Enum.map(Enum.take(urls, 2), fn url ->
             %{src: Extoon.Image.Plug.Upload.make_plug!(url), assoc_id: entry.id}
           end)
           {entry, items, Map.put(params, :thumbs, thumbs)}
