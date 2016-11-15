@@ -72,6 +72,7 @@ defmodule Extoon.Mixfile do
       {:floki, "~> 0.11"},
 
       {:the_fuzz, "~> 0.3"},
+      {:esx, github: "ikeikeikeike/esx"},
     ]
   end
 

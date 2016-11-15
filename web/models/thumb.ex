@@ -1,13 +1,14 @@
 defmodule Extoon.Thumb do
   use Extoon.Web, :model
   use Arc.Ecto.Schema
+  alias Extoon.ThumbUploader
 
   @json_fields ~w(name src ext mime width height)
   @derive {Poison.Encoder, only: Enum.map(@json_fields, & String.to_atom(&1))}
   schema "thumbs" do
     field :assoc_id, :integer
 
-    field :src, Extoon.ThumbUploader.Type
+    field :src, ThumbUploader.Type
     field :name, :string
     field :ext, :string
     field :mime, :string
@@ -31,7 +32,8 @@ defmodule Extoon.Thumb do
   end
 
   # fetch icon url
-  def get_thumb(st), do: ThumbUploader.url {st.image, st}
-  def get_thumb(st, version), do: ThumbUploader.url {st.image, st}, version
+  def get_thumb(%__MODULE__{src: nil}), do: nil
+  def get_thumb(st), do: ThumbUploader.url {st.src, st}
+  def get_thumb(st, version), do: ThumbUploader.url {st.src, st}, version
 
 end
