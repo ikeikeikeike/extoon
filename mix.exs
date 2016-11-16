@@ -33,8 +33,8 @@ defmodule Extoon.Mixfile do
        :common_device_detector,
 
        :floki,
-
-       :the_fuzz
+       :the_fuzz,
+       :esx,
      ]]
   end
 
@@ -70,7 +70,6 @@ defmodule Extoon.Mixfile do
       {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
       {:exsentry, "~> 0.7"},
       {:floki, "~> 0.11"},
-
       {:the_fuzz, "~> 0.3"},
       {:esx, github: "ikeikeikeike/esx"},
     ]
