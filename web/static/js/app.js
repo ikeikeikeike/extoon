@@ -21,5 +21,6 @@ import "dmm.js/browser"
 
 // import socket from "./socket"
 
+import "./nearlyslider"
 import "./common"
 import "./ads"

@@ -14,6 +14,7 @@ defmodule Extoon do
       supervisor(Extoon.Endpoint, []),
       # Start your own worker by calling: Extoon.Worker.start_link(arg1, arg2, arg3)
       # worker(Extoon.Worker, [arg1, arg2, arg3]),
+      worker(ConCache, [[ttl_check: :timer.seconds(60), ttl: :timer.seconds(60 * 10)], [name: :new_entries]], id: :extoon_new_entries_cache),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

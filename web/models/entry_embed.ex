@@ -2,6 +2,7 @@ defmodule Extoon.EntryEmbed do
   use Extoon.Web, :model
 
   schema "entries_embeds" do
+    belongs_to :entry, Extoon.Entry
     field :code, :string
 
     timestamps()

@@ -4,11 +4,14 @@ defmodule Extoon.HomeController do
   alias Extoon.{Entry, Category}
 
   def index(conn, _params) do
+    qs = Entry.query(Entry, :index)
+      # |> Entry.published
+    # XXX: Temporary fix
     qs =
-      from q in Entry,
+      from q in qs,
       where: not is_nil(q.maker_id),
-      preload: [:thumbs, :tags],
       limit: 32
+
     entries = Repo.all(qs)
 
     qs = from q in Category, order_by: q.id

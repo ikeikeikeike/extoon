@@ -36,6 +36,12 @@ defmodule Extoon.Mixfile do
        :the_fuzz,
        :esx,
        :phoenix_html_simplified_helpers,
+
+       :floki,
+       :mochiweb,
+       :html_sanitize_ex,
+
+       :con_cache,
      ]]
   end
 
@@ -74,6 +80,12 @@ defmodule Extoon.Mixfile do
       {:the_fuzz, "~> 0.3"},
       {:esx, github: "ikeikeikeike/esx"},
       {:phoenix_html_simplified_helpers, "~> 0.7"},
+
+      {:html_sanitize_ex, "~> 1.1"},
+      {:floki, "~> 0.11"},
+      {:mochiweb, ">= 2.12.2", override: true},
+
+      {:con_cache, "~> 0.11"}
     ]
   end
 

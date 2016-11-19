@@ -2,6 +2,7 @@ defmodule Extoon.EntryUrl do
   use Extoon.Web, :model
 
   schema "entries_urls" do
+    belongs_to :entry, Extoon.Entry
     field :url, :string
 
     timestamps()

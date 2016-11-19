@@ -4,7 +4,7 @@ defmodule Extoon.EntryController do
   alias Extoon.{Entry, Category}
 
   def show(conn, %{"id" => id} = params) do
-    entry = Repo.get!(Entry, id) |> Repo.preload([:thumbs, :tags])
+    entry = Repo.get!(Entry.query(Entry, :show), id)
 
     qs =
       from q in Entry,
@@ -13,8 +13,9 @@ defmodule Extoon.EntryController do
       limit: 4
     entries = Repo.all(qs)
 
-    qs = from q in Category, order_by: q.id
-    categories = Repo.all(qs)
+    categories =
+      from(q in Category, order_by: q.id)
+      |> Repo.all
 
     render conn, "show.html", entry: entry, entries: entries, categories: categories
   end
