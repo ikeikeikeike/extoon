@@ -30,8 +30,8 @@ defmodule Extoon.Entry do
   end
 
   mapping do
-    indexes :title, type: "string"
-    indexes :content, type: "string"
+    indexes :title, type: "string", analyzer: "ja_analyzer"
+    indexes :content, type: "string", analyzer: "ja_analyzer"
     indexes :publish, type: "boolean"
   end
 
@@ -39,23 +39,13 @@ defmodule Extoon.Entry do
     filter :ja_posfilter,
       type: "kuromoji_neologd_part_of_speech",
       stoptags: ["助詞-格助詞-一般", "助詞-終助詞"]
-    filter "edge_ngram",
-      type: "edgeNGram", min_gram: 1, max_gram: 15
 
     tokenizer :ja_tokenizer,
       type: "kuromoji_neologd_tokenizer"
-    tokenizer :ngram_tokenizer,
-      type: "nGram", min_gram: "2", max_gram: "3",
-      token_chars: ["letter", "digit"]
 
-    analyzer :default,
-      type: "custom", tokenizer: "ja_tokenizer",
-      filter: ["kuromoji_neologd_baseform", "ja_posfilter", "cjk_width"]
     analyzer :ja_analyzer,
       type: "custom", tokenizer: "ja_tokenizer",
       filter: ["kuromoji_neologd_baseform", "ja_posfilter", "cjk_width"]
-    analyzer :ngram_analyzer,
-      tokenizer: "ngram_tokenizer"
   end
 
   @requires ~w(title)a

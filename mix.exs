@@ -35,6 +35,7 @@ defmodule Extoon.Mixfile do
        :floki,
        :the_fuzz,
        :esx,
+       :phoenix_html_simplified_helpers,
      ]]
   end
 
@@ -72,6 +73,7 @@ defmodule Extoon.Mixfile do
       {:floki, "~> 0.11"},
       {:the_fuzz, "~> 0.3"},
       {:esx, github: "ikeikeikeike/esx"},
+      {:phoenix_html_simplified_helpers, "~> 0.7"},
     ]
   end
 

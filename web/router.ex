@@ -17,6 +17,10 @@ defmodule Extoon.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", HomeController, :index
+
+    scope "/s" do
+      get "/:id", EntryController, :show
+    end
   end
 
   # Other scopes may use custom stacks.
