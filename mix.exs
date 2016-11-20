@@ -42,6 +42,9 @@ defmodule Extoon.Mixfile do
        :html_sanitize_ex,
 
        :con_cache,
+
+       :scrivener_ecto,
+       :scrivener_html,
      ]]
   end
 
@@ -85,7 +88,10 @@ defmodule Extoon.Mixfile do
       {:floki, "~> 0.11"},
       {:mochiweb, ">= 2.12.2", override: true},
 
-      {:con_cache, "~> 0.11"}
+      {:con_cache, "~> 0.11"},
+
+      {:scrivener_ecto, "~> 1.0"},
+      {:scrivener_html, "~> 1.1"},
     ]
   end
 

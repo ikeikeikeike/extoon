@@ -5,7 +5,7 @@ defmodule Extoon.HomeController do
 
   plug Extoon.Ctrl.Plug.AssignCategory
 
-  def index(conn, _params) do
+  def index(conn, params) do
     qs = Entry.query(Entry, :index)
       # |> Entry.published
     # XXX: Temporary fix
@@ -15,7 +15,7 @@ defmodule Extoon.HomeController do
       order_by: [desc: q.id],
       limit: 32
 
-    entries = Repo.all(qs)
+    entries = Repo.paginate(qs, params)
 
     render conn, "index.html", entries: entries
   end

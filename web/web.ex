@@ -56,6 +56,8 @@ defmodule Extoon.Web do
 
       import Extoon.Checks
       import Extoon.MyHelpers
+
+      import Scrivener.HTML
       import CommonDeviceDetector.Detector
     end
   end

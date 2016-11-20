@@ -12,7 +12,9 @@ defmodule Extoon.CategoryController do
       order_by: [desc: q.id],
       limit: 32
 
-    render conn, "index.html", category: Repo.get_by(Category, alias: alias), entries: Repo.all(qs)
+    entries = Repo.paginate(qs, params)
+
+    render conn, "index.html", entries: entries, category: Repo.get_by(Category, alias: alias)
   end
 
   def latest(conn, %{"alias" => alias} = params) do
@@ -22,7 +24,9 @@ defmodule Extoon.CategoryController do
       order_by: [desc: q.id],
       limit: 32
 
-    render conn, "latest.html", category: Repo.get_by(Category, alias: alias), entries: Repo.all(qs)
+    entries = Repo.paginate(qs, params)
+
+    render conn, "latest.html", entries: entries, category: Repo.get_by(Category, alias: alias)
   end
 
   def popular(conn, %{"alias" => alias} = params) do
