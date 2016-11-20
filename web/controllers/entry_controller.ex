@@ -9,9 +9,8 @@ defmodule Extoon.EntryController do
     entry = Repo.get!(Entry.query(Entry, :show), id)
 
     qs =
-      from q in Entry,
+      from q in Entry.query(Entry, :index),
       where: not is_nil(q.maker_id),
-      preload: [:thumbs, :tags],
       limit: 4
     entries = Repo.all(qs)
 

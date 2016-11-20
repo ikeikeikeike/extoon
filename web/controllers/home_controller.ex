@@ -12,6 +12,7 @@ defmodule Extoon.HomeController do
     qs =
       from q in qs,
       where: not is_nil(q.maker_id),
+      order_by: [desc: q.id],
       limit: 32
 
     entries = Repo.all(qs)

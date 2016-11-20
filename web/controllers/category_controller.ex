@@ -5,24 +5,27 @@ defmodule Extoon.CategoryController do
 
   plug Extoon.Ctrl.Plug.AssignCategory
 
-  def show(conn, %{"id" => id} = params) do
-    entry = Repo.get!(Entry.query(Entry, :show), id)
-
+  def index(conn, %{"alias" => alias} = params) do
     qs =
-      from q in Entry,
-      where: not is_nil(q.maker_id),
-      preload: [:thumbs, :tags],
-      limit: 4
-    entries = Repo.all(qs)
+      from [q, j] in Entry.with_relation(Entry.query(Entry, :index), Category),
+      where: not is_nil(q.maker_id) and j.alias == ^alias,
+      order_by: [desc: q.id],
+      limit: 32
 
-    render conn, "show.html", entry: entry, entries: entries
+    render conn, "index.html", category: Repo.get_by(Category, alias: alias), entries: Repo.all(qs)
   end
 
-  def latest(conn, %{"name" => name} = params) do
+  def latest(conn, %{"alias" => alias} = params) do
+    qs =
+      from [q, j] in Entry.with_relation(Entry.query(Entry, :index), Category),
+      where: not is_nil(q.maker_id) and j.alias == ^alias,
+      order_by: [desc: q.id],
+      limit: 32
 
+    render conn, "latest.html", category: Repo.get_by(Category, alias: alias), entries: Repo.all(qs)
   end
 
-  def popular(conn, %{"name" => name} = params) do
+  def popular(conn, %{"alias" => alias} = params) do
 
   end
 
