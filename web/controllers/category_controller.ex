@@ -1,4 +1,4 @@
-defmodule Extoon.EntryController do
+defmodule Extoon.CategoryController do
   use Extoon.Web, :controller
   alias Extoon.Repo
   alias Extoon.{Entry, Category}
@@ -17,4 +17,13 @@ defmodule Extoon.EntryController do
 
     render conn, "show.html", entry: entry, entries: entries
   end
+
+  def latest(conn, %{"name" => name} = params) do
+
+  end
+
+  def popular(conn, %{"name" => name} = params) do
+
+  end
+
 end

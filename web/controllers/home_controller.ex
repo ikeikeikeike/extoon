@@ -3,6 +3,8 @@ defmodule Extoon.HomeController do
   alias Extoon.Repo
   alias Extoon.{Entry, Category}
 
+  plug Extoon.Ctrl.Plug.AssignCategory
+
   def index(conn, _params) do
     qs = Entry.query(Entry, :index)
       # |> Entry.published
@@ -14,9 +16,6 @@ defmodule Extoon.HomeController do
 
     entries = Repo.all(qs)
 
-    qs = from q in Category, order_by: q.id
-    categories = Repo.all(qs)
-
-    render conn, "index.html", entries: entries, categories: categories
+    render conn, "index.html", entries: entries
   end
 end

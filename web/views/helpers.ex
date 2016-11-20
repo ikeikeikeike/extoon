@@ -43,11 +43,11 @@ defmodule Extoon.MyHelpers do
     end
   end
 
-  def new_categories(%{} = st, where), do: new_categories st.__struct__, where
-  def new_categories(mod, where) do
-    key = "new_entries:#{Funcs.thename mod}:#{inspect where}"
+  def latest_entries(%{} = st, where), do: latest_entries st.__struct__, where
+  def latest_entries(mod, where) do
+    key = "latest_entries:#{Funcs.thename mod}:#{inspect where}"
 
-    ConCache.get_or_store :new_entries, key, fn ->
+    ConCache.get_or_store :latest_entries, key, fn ->
       qs =
         from(q in Entry, order_by: [desc: q.id], limit: 4)
         |> Entry.query(:index)

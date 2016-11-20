@@ -21,6 +21,12 @@ defmodule Extoon.Router do
     scope "/s" do
       get "/:id", EntryController, :show
     end
+
+    scope "/c" do
+      get "/:name/latest", CategoryController, :latest
+      get "/:name/popular", CategoryController, :popular
+      # get "/:name/ranking", CategoryController, :ranking
+    end
   end
 
   # Other scopes may use custom stacks.
