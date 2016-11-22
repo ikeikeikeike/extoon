@@ -34,7 +34,6 @@ defmodule Extoon.Mixfile do
 
        :floki,
        :the_fuzz,
-       :esx,
        :phoenix_html_simplified_helpers,
 
        :floki,
@@ -43,6 +42,8 @@ defmodule Extoon.Mixfile do
 
        :con_cache,
 
+       :esx,
+       :scrivener_esx,
        :scrivener_ecto,
        :scrivener_html,
      ]]
@@ -75,23 +76,20 @@ defmodule Extoon.Mixfile do
       {:hackney, "~> 1.5"},
       {:poison, "~> 2.0"},
       {:sweet_xml, "~> 0.5"},
-
       {:yamerl, "~> 0.3", override: true},
       {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
       {:exsentry, "~> 0.7"},
       {:floki, "~> 0.11"},
       {:the_fuzz, "~> 0.3"},
-      {:esx, github: "ikeikeikeike/esx"},
       {:phoenix_html_simplified_helpers, "~> 0.7"},
-
       {:html_sanitize_ex, "~> 1.1"},
       {:floki, "~> 0.11"},
       {:mochiweb, ">= 2.12.2", override: true},
-
       {:con_cache, "~> 0.11"},
-
+      {:esx, github: "ikeikeikeike/esx"},
       {:scrivener_ecto, "~> 1.0"},
       {:scrivener_html, "~> 1.1"},
+      {:scrivener_esx, github: "ikeikeikeike/scrivener_esx"},
     ]
   end
 
