@@ -6,17 +6,24 @@ defmodule Extoon.HomeController do
   plug Extoon.Ctrl.Plug.AssignCategory
 
   def index(conn, params) do
-    qs = Entry.query(Entry, :index)
+    entryqs = Entry.query(Entry, :index)
       # |> Entry.published
+
     # XXX: Temporary fix
     qs =
-      from q in qs,
+      from q in entryqs,
       where: not is_nil(q.maker_id),
       order_by: [desc: q.id],
       limit: 32
 
     entries = Repo.paginate(qs, params)
 
-    render conn, "index.html", entries: entries
+    esresult =
+      Extoon.Entry
+      |> ESx.Model.search(%{})
+      |> ESx.Model.Response.records(entryqs)
+      |> Scrivener.paginate(Scrivener.Config.new(params))
+
+    render conn, "index.html", entries: esresult
   end
 end

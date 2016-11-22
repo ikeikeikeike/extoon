@@ -31,23 +31,27 @@ defmodule Extoon.Entry do
     timestamps()
   end
 
-  mapping do
+  mapping _all: [enabled: false] do
     indexes :title, type: "string", analyzer: "ja_analyzer"
     indexes :content, type: "string", analyzer: "ja_analyzer"
     indexes :publish, type: "boolean"
   end
 
-  analysis do
-    filter :ja_posfilter,
-      type: "kuromoji_neologd_part_of_speech",
-      stoptags: ["助詞-格助詞-一般", "助詞-終助詞"]
+  settings do
+    analysis do
+      filter :ja_posfilter,
+        type: "kuromoji_neologd_part_of_speech",
+        stoptags: ["助詞-格助詞-一般", "助詞-終助詞"]
 
-    tokenizer :ja_tokenizer,
-      type: "kuromoji_neologd_tokenizer"
+      tokenizer :ja_tokenizer,
+        type: "kuromoji_neologd_tokenizer",
+        mode: "search"
 
-    analyzer :ja_analyzer,
-      type: "custom", tokenizer: "ja_tokenizer",
-      filter: ["kuromoji_neologd_baseform", "ja_posfilter", "cjk_width"]
+      analyzer :ja_analyzer,
+        type: "custom", tokenizer: "ja_tokenizer",
+        char_filter: ["html_strip", "kuromoji_neologd_iteration_mark"],
+        filter: ["kuromoji_neologd_baseform", "kuromoji_neologd_stemmer", "ja_posfilter", "cjk_width"]
+    end
   end
 
   @requires ~w(title)a
