@@ -81,7 +81,7 @@ defmodule Extoon.Entry do
     |> cast_assoc(:info, required: true)
   end
 
-  @query_index [:thumbs, :tags]
+  @query_index [:thumbs, :category, :maker]
   def query(query, :index) do
     from q in query,
     preload: ^@query_index

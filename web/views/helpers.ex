@@ -63,4 +63,87 @@ defmodule Extoon.MyHelpers do
 
   end
 
+  @def_keyword Application.get_env(:extoon, :categories)[:anime]
+  def dms_attributes(assigns) do
+    attrs =
+      case assigns do
+        %{entry: entry} ->
+          attrs = ~w(
+            data-keyword=#{entry.title}
+            data-maker=#{entry.maker.name}
+            data-category=#{entry.category.name}
+          )
+
+          attrs
+          ++ [if(entry.label, do: "data-label=#{entry.label.name}")]
+          ++ [if(entry.series, do: "data-series=#{entry.series.name}")]
+
+        %{conn: %{params: %{"q" => q}}} ->
+          ~w(data-keyword=#{q})
+
+        %{category: %{name: name}} ->
+          ~w(data-keyword=#{name})
+
+        %{entries: entries} when not is_nil entries ->
+          ~w(data-keyword=#{@def_keyword})
+
+        _ ->
+          []
+      end
+
+    attrs
+    |> Enum.filter(& !!&1)
+    |> Enum.join(" ")
+
+  end
+
+  def take_params(%Plug.Conn{} = conn, keys)
+  when is_list(keys),
+    do: take_params(conn, keys, %{})
+
+  def take_params(%Plug.Conn{} = conn, keys, merge)
+  when is_list(keys) and is_list(merge),
+    do: take_params(conn, keys, Enum.into(merge, %{}))
+
+  def take_params(%Plug.Conn{} = conn, keys, merge) do
+    conn.params
+    |> Map.take(keys)
+    |> Map.merge(merge)
+  end
+
+  def take_hidden_field_tags(%Plug.Conn{} = conn, keys) when is_list(keys) do
+    Enum.map take_params(conn, keys), fn{key, value} ->
+      Tag.tag(:input, type: "hidden", id: key, name: key, value: value)
+    end
+  end
+
+  def carried_params do
+    ~w(page q maker label series category tag)
+  end
+
+  def search_value(conn) do
+    [
+      conn.params["q"],
+      conn.params["tag"],
+      conn.params["category"],
+      conn.params["maker"],
+      conn.params["label"],
+      conn.params["series"],
+    ]
+    |> Enum.uniq
+    |> Enum.join(" ")
+    |> String.trim
+  end
+
+  def to_keylist(params) do
+    Enum.reduce(params, [], fn {k, v}, kw ->
+      if !is_atom(k), do: k = String.to_atom(k)
+      Keyword.put(kw, k , v)
+    end)
+  end
+
+  def to_qstring(params) do
+    "?" <> URI.encode_query params
+  end
+
 end

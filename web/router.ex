@@ -23,9 +23,15 @@ defmodule Extoon.Router do
     end
 
     scope "/c" do
+      get "/latest/:alias", CategoryController, :latest
+      get "/latest", CategoryController, :latest
+
+      get "/popular/:alias", CategoryController, :popular
+      get "/popular", CategoryController, :popular
+
       get "/:alias", CategoryController, :index
-      get "/:alias/latest", CategoryController, :latest
-      get "/:alias/popular", CategoryController, :popular
+      get "/", CategoryController, :index
+
       # get "/:name/ranking", CategoryController, :ranking
     end
   end
