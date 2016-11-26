@@ -32,7 +32,10 @@ erl_crash.dump
 /web/static/js
 /web/static/css
 /web/static/assets/images
+
+/web/static/js/ads.js
 /web/static/assets/prepare/common.js
+
 
 /web/templates
 
