@@ -20,7 +20,7 @@ defmodule Extoon.EntryController do
 
     entries =
       entryqs
-      |> Extoon.ESx.search(%{filter: %{term: %{publish: true}}})
+      |> Extoon.ESx.search(Entry.esquery(params))
       |> Extoon.ESx.paginate(params)
 
     render conn, "index.html", entries: entries

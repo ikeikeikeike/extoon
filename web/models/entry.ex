@@ -79,6 +79,27 @@ defmodule Extoon.Entry do
     }
   end
 
+  def esquery(params \\ %{}) do
+    query = %{
+      query: %{
+        filtered: %{
+          query: %{
+            match_all: %{}
+          },
+          filter: %{
+            bool: %{
+              must: [
+                %{term: %{publish: false}},
+              ]
+            }
+          },
+        }
+      }
+    }
+
+    query
+  end
+
   @requires ~w(title)a
   @options ~w(
     maker_id category_id series_id label_id
