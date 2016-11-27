@@ -73,6 +73,17 @@ defmodule Extoon.Entry do
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
+  def publish_changeset(st, params \\ nil) do
+    params = params || %{publish: true, published_at: Ecto.DateTime.utc}
+
+    st
+    |> cast(params, ~w(publish published_at)a, [])
+    |> validate_required(~w(publish published_at)a)
+  end
+
+  @doc """
+  Builds a changeset based on the `struct` and `params`.
+  """
   def info_changeset(st, params \\ %{}) do
     st
     |> changeset(params)
@@ -113,10 +124,12 @@ defmodule Extoon.Entry do
   def with_relation(query, Maker = mod), do: from q in query, join: j in assoc(q, :maker), where: j.id == q.maker_id
   def with_relation(query, LAbel = mod), do: from q in query, join: j in assoc(q, :label), where: j.id == q.label_id
 
-  def released(query),      do: from q in query, where: q.publish == true
-  def unreleased(query),    do: from q in query, where: q.publish == false
-  # def reviewed(query),      do: from p in query, where: p.review  == true
-  # def unreviewed(query),    do: from p in query, where: p.review  == false
+  def released(query),        do: from q in query, where: q.publish == true
+  def unreleased(query),      do: from q in query, where: q.publish == false
+  def infoabled(query),       do: from q in query, where: not is_nil(q.maker_id) and not is_nil(q.category_id)
+  def uninfoabled(query),     do: from q in query, where: is_nil(q.maker_id) and is_nil(q.category_id)
+  def contentabled(query),    do: from q in query, where: q.content != "" and not is_nil(q.content)
+  def uncontentabled(query),  do: from q in query, where: q.content == "" or is_nil(q.content)
   # def removed(query),       do: from p in query, where: p.removal == true
   # def unremoved(query),     do: from p in query, where: p.removal == false
 
@@ -125,7 +138,8 @@ defmodule Extoon.Entry do
   def published(query) do
     query
     |> released
-    # |> reviewed
+    |> infoabled
+    |> contentabled
     # |> unremoved
   end
 
@@ -134,7 +148,18 @@ defmodule Extoon.Entry do
   def reserved(query) do
     query
     |> unreleased
-    # |> reviewed
+    |> infoabled
+    |> contentabled
+    # |> unremoved
+  end
+
+  # before reserve status
+  #
+  def pre_reserved(query) do
+    query
+    |> unreleased
+    |> infoabled
+    |> uncontentabled
     # |> unremoved
   end
 
@@ -143,7 +168,8 @@ defmodule Extoon.Entry do
   def initialized(query) do
     query
     |> unreleased
-    # |> unreviewed
+    |> uninfoabled
+    |> uncontentabled
     # |> unremoved
   end
 

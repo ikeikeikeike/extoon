@@ -1,4 +1,5 @@
 defmodule Extoon.Builders.Info do
+  import Extoon.Builders.Base
   import Ecto.Query, only: [from: 2]
 
   alias Extoon.{Repo, Funcs}
@@ -11,10 +12,7 @@ defmodule Extoon.Builders.Info do
   def run, do: run []
   def run([]) do
     queryable =
-      from q in Entry,
-        where: q.publish == false
-           and is_nil(q.maker_id)
-           and is_nil(q.category_id),
+      from q in Entry.initialized(Entry),
         order_by: q.updated_at,
         limit: 10
 
@@ -224,21 +222,4 @@ defmodule Extoon.Builders.Info do
     end
   end
 
-  defp setback(st, err) do
-    Logger.warn "Setback\nErr:#{inspect err}\nSt:#{inspect st}"
-
-    Repo.rollback(st)
-    ExSentry.capture_exception(err)
-  end
-
-  defp skip(%Entry{} = st), do: skip st, ""
-  defp skip(%Entry{} = st, msg) do
-    Logger.warn "Skip\nMsg:#{inspect msg}\nSt:#{inspect st}"
-
-    st
-    |> Entry.changeset(%{updated_at: Ecto.DateTime.utc})
-    |> Repo.update
-
-    false
-  end
 end
