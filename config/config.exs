@@ -36,13 +36,6 @@ config :esx, ESx.Model,
   port: 9200,
   trace: true
 
-config :extoon, Extoon.ESx,
-  repo: Extoon.Repo,
-  protocol: "http",
-  host: "localhost",
-  port: 9200,
-  trace: true
-
 config :scrivener_html,
   routes_helper: Extoon.Router.Helpers
 

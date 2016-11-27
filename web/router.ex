@@ -18,6 +18,10 @@ defmodule Extoon.Router do
 
     get "/", HomeController, :index
 
+    scope "/e" do
+      get "/", EntryController, :index
+    end
+
     scope "/s" do
       get "/:id", EntryController, :show
     end

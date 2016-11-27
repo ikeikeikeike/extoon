@@ -18,12 +18,6 @@ defmodule Extoon.HomeController do
 
     entries = Repo.paginate(qs, params)
 
-    # esresult =
-      # Extoon.Entry
-      # |> ESx.Model.search(%{})
-      # |> ESx.Model.Response.records(entryqs)
-      # |> Scrivener.paginate(Scrivener.Config.new(params))
-
     render conn, "index.html", entries: entries
   end
 end
