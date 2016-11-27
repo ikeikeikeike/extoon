@@ -6,13 +6,12 @@ defmodule Extoon.HomeController do
   plug Extoon.Ctrl.Plug.AssignCategory
 
   def index(conn, params) do
-    entryqs = Entry.query(Entry, :index)
-      # |> Entry.published
+    entryqs =
+      Entry.query(Entry, :index)
+      |> Entry.published
 
-    # XXX: Temporary fix
     qs =
       from q in entryqs,
-      where: not is_nil(q.maker_id),
       order_by: [desc: q.id],
       limit: 32
 

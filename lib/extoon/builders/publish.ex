@@ -10,7 +10,7 @@ defmodule Extoon.Builders.Publish do
   def run, do: run []
   def run([]) do
     queryable =
-      from q in Entry.reserved(Entry),
+      from q in Entry.reserved(Entry.query(Entry, :doc)),
         order_by: q.updated_at,
         limit: 20
 

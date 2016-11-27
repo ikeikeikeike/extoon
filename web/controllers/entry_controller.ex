@@ -30,8 +30,8 @@ defmodule Extoon.EntryController do
     entry = Repo.get!(Entry.query(Entry, :show), id)
 
     qs =
-      from q in Entry.query(Entry, :index),
-      where: not is_nil(q.maker_id),
+      from q in Entry.published(Entry.query(Entry, :index)),
+      order_by: [desc: q.id],
       limit: 4
     entries = Repo.all(qs)
 

@@ -32,8 +32,18 @@ defmodule Extoon.Entry do
   end
 
   mapping _all: [enabled: false] do
+    indexes :maker, type: "string", index: "not_analyzed"
+    indexes :label, type: "string", index: "not_analyzed"
+    indexes :series, type: "string", index: "not_analyzed"
+    indexes :category, type: "string", index: "not_analyzed"
+    indexes :tags, type: "string", index: "not_analyzed"
+
     indexes :title, type: "string", analyzer: "ja_analyzer"
     indexes :content, type: "string", analyzer: "ja_analyzer"
+
+    indexes :duration, type: "long"
+    indexes :release_date, type: "date", format: "dateOptionalTime"
+
     indexes :publish, type: "boolean"
   end
 
@@ -52,6 +62,21 @@ defmodule Extoon.Entry do
         char_filter: ["html_strip", "kuromoji_neologd_iteration_mark"],
         filter: ["kuromoji_neologd_baseform", "kuromoji_neologd_stemmer", "ja_posfilter", "cjk_width"]
     end
+  end
+
+  def as_indexed_json(st, opts) do
+    %{
+      maker: st.maker.name,
+      category: st.category.name,
+      label: get_in(st, [Access.key(:label), Access.key(:name)]),
+      series: get_in(st, [Access.key(:series), Access.key(:name)]),
+      tags: Enum.map(st.tags, & &1.name),
+      title: st.title,
+      content: st.content,
+      duration: st.duration,
+      release_date: st.release_date,
+      publish: st.publish,
+    }
   end
 
   @requires ~w(title)a
@@ -96,6 +121,12 @@ defmodule Extoon.Entry do
   def query(query, :index) do
     from q in query,
     preload: ^@query_index
+  end
+
+  @query_doc [:category, :maker, :label, :series, :tags]
+  def query(query, :doc) do
+    from q in query,
+    preload: ^@query_doc
   end
 
   def query(query, :show) do
