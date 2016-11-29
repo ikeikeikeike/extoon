@@ -26,6 +26,21 @@ defmodule Extoon.Router do
       get "/:id", EntryController, :show
     end
 
+    # TODO: should be search maker_id from database instead of es
+    scope "/maker" do
+      get "/:q", EntryController, :index, as: :maker
+    end
+
+    # TODO: should be search series_id from database instead of es
+    scope "/series" do
+      get "/:q", EntryController, :index, as: :series
+    end
+
+    # TODO: should be search label_id from database instead of es
+    scope "/label" do
+      get "/:q", EntryController, :index, as: :label
+    end
+
     scope "/c" do
       get "/latest/:alias", CategoryController, :latest
       get "/latest", CategoryController, :latest

@@ -89,13 +89,24 @@ defmodule Extoon.Entry do
           filter: %{
             bool: %{
               must: [
-                %{term: %{publish: false}},
+                %{term: %{publish: true}},
               ]
             }
           },
         }
       }
     }
+
+    query =
+      unless q = params["q"], do: query, else: (
+        multi_match = %{
+          multi_match: %{
+            query: q,
+            fields: ~w(title content maker category label series tags)
+          }
+        }
+        put_in(query, [:query, :filtered, :query], multi_match)
+      )
 
     query
   end
