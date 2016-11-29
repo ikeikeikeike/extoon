@@ -161,7 +161,7 @@ defmodule Extoon.MyHelpers do
     case List.first(picked) do
        nil           -> nil
       {score, entry} ->
-        if score < 5 do
+        if score < 4 do
           Repo.get!(Entry.query(Entry, :show), entry.id)
         end
     end
