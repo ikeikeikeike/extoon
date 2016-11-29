@@ -3,6 +3,7 @@ defmodule Extoon.CategoryController do
   alias Extoon.Repo
   alias Extoon.{Entry, Category}
 
+  plug Extoon.Ctrl.Plug.AssignPath
   plug Extoon.Ctrl.Plug.AssignCategory
 
   def index(conn, %{"alias" => alias} = params) do

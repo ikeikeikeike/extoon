@@ -4,8 +4,8 @@ defmodule Extoon.MyHelpers do
   import Ecto.Query, only: [from: 1, from: 2]
 
   alias Extoon.Repo
-  alias Extoon.{Entry,Thumb}
-  alias Extoon.Funcs
+  alias Extoon.{Entry, Thumb}
+  alias Extoon.{Funcs, Levenshtein}
 
   def thumb(thumbs) do
     if thumb = List.first(thumbs), do: Thumb.get_thumb(thumb), else: nil
@@ -25,7 +25,7 @@ defmodule Extoon.MyHelpers do
     layout.render template, assigns
   end
 
-  def nearly_entries(%{maker: maker, label: label, series: series} = entry) do
+  def similar_entries(%{maker: maker, label: label, series: series} = entry) do
     lentries = Map.get label || %{}, :entries, []
     sentries = Map.get series || %{}, :entries, []
 
@@ -145,5 +145,32 @@ defmodule Extoon.MyHelpers do
   def to_qstring(params) do
     "?" <> URI.encode_query params
   end
+
+  def pickup_in(%{params: %{"q" => q}}, entries) do
+    picked =
+      entries
+      |> Enum.map(fn entry ->
+         case Levenshtein.compare(q, entry.title) do
+           nil   -> nil
+           score -> {score, entry}
+         end
+      end)
+      |> Enum.filter(& !!&1)
+      |> Enum.sort(& elem(&1, 0) < elem(&2, 0))
+
+    case List.first(picked) do
+       nil           -> nil
+      {score, entry} ->
+        if score < 5 do
+          Repo.get!(Entry.query(Entry, :show), entry.id)
+        end
+    end
+
+    # %{"q" => q} ->
+      # Q.fuzzy_find(Entry.query(Entry, :show), q)
+    # _ ->
+      # nil
+  end
+  def pickup_in(_, _), do: nil
 
 end

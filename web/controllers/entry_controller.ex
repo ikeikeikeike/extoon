@@ -1,8 +1,9 @@
 defmodule Extoon.EntryController do
   use Extoon.Web, :controller
-  alias Extoon.Repo
-  alias Extoon.{Entry, Category}
+  alias Extoon.{Repo, Entry, Category}
+  alias Extoon.Ecto.Q
 
+  plug Extoon.Ctrl.Plug.AssignPath
   plug Extoon.Ctrl.Plug.AssignCategory
 
   def index(conn, params) do
