@@ -38,4 +38,14 @@ defmodule Extoon.EntryController do
 
     render conn, "show.html", entry: entry, entries: entries
   end
+
+  def suggest(conn, %{"search" => search}) do
+    results =
+      Entry
+      |> Extoon.ESx.search(Entry.essuggest(search))
+      |> Extoon.ESx.results
+
+    results
+    |> Enum.map(& &1["fields"]["rubytext"])
+  end
 end

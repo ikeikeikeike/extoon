@@ -45,6 +45,8 @@ defmodule Extoon.Entry do
     indexes :release_date, type: "date", format: "dateOptionalTime"
 
     indexes :publish, type: "boolean"
+
+    indexes :rubytext, type: "string", analyzer: "rubytext_analyzer", store: true
   end
 
   settings do
@@ -52,15 +54,35 @@ defmodule Extoon.Entry do
       filter :ja_posfilter,
         type: "kuromoji_neologd_part_of_speech",
         stoptags: ["助詞-格助詞-一般", "助詞-終助詞"]
-
       tokenizer :ja_tokenizer,
         type: "kuromoji_neologd_tokenizer",
         mode: "search"
-
       analyzer :ja_analyzer,
         type: "custom", tokenizer: "ja_tokenizer",
         char_filter: ["html_strip", "kuromoji_neologd_iteration_mark"],
         filter: ["kuromoji_neologd_baseform", "kuromoji_neologd_stemmer", "ja_posfilter", "cjk_width"]
+
+      tokenizer :kuromoji_pserson_dic,
+        type: "kuromoji_neologd_tokenizer"
+        # user_dictionary: "person.dic"
+      filter :katakana_readingform,
+        type: "kuromoji_neologd_readingform",
+        use_romaji: false
+      filter :split_delimiter,
+          type: "word_delimiter",
+          generate_word_parts: true,
+          generate_number_parts: false,
+          catenate_words: false,
+          catenate_numbers: false,
+          catenate_all: false,
+          split_on_case_change: false,
+          preserve_original: false,
+          split_on_numerics: false,
+          stem_english_possessive: false
+      analyzer :rubytext_analyzer,
+        type: "custom",
+        tokenizer: "kuromoji_pserson_dic",
+        filter: ["katakana_readingform", "split_delimiter"]
     end
   end
 
@@ -72,6 +94,7 @@ defmodule Extoon.Entry do
       series: get_in(st, [Access.key(:series), Access.key(:name)]),
       tags: Enum.map(st.tags, & &1.name),
       title: st.title,
+      rubytext: st.title,
       content: st.content,
       duration: st.duration,
       release_date: st.release_date,
@@ -81,6 +104,7 @@ defmodule Extoon.Entry do
 
   def esquery(params \\ %{}) do
     query = %{
+      fields: [],
       query: %{
         filtered: %{
           query: %{
@@ -109,6 +133,26 @@ defmodule Extoon.Entry do
       )
 
     query
+  end
+
+  def essuggest(word) do
+    query = %{
+      fields: ["rubytext"],
+      query: %{
+        filtered: %{
+          query: %{
+            match: %{rubytext: word}
+          },
+          filter: %{
+            bool: %{
+              must: [
+                %{term: %{publish: true}},
+              ]
+            }
+          },
+        }
+      }
+    }
   end
 
   @requires ~w(title)a
