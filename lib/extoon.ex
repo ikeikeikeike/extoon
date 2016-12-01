@@ -16,6 +16,7 @@ defmodule Extoon do
       # worker(Extoon.Worker, [arg1, arg2, arg3]),
       worker(ConCache, [[ttl_check: :timer.seconds(60), ttl: :timer.seconds(60 * 10)], [name: :latest_entries]], id: :extoon_latest_entries_cache),
       worker(ConCache, [[ttl_check: :timer.seconds(360), ttl: :timer.seconds(60 * 60)], [name: :categories]], id: :extoon_categories_cache),
+      worker(ConCache, [[ttl_check: :timer.seconds(600), ttl: :timer.seconds(60 * 60 * 24 * 1)], [name: :es]], id: :extoon_es_cache),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

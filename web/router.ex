@@ -26,6 +26,10 @@ defmodule Extoon.Router do
       get "/:id", EntryController, :show
     end
 
+    scope "/suggest" do
+      get "/e/:q", EntryController, :suggest
+    end
+
     # TODO: should be search maker_id from database instead of es
     scope "/maker" do
       get "/:q", EntryController, :index, as: :maker

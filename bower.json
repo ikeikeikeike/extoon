@@ -12,6 +12,7 @@
   ],
   "dependencies": {
     "underscore": "^1.8.3",
+    "typeahead.js": "^0.10.5",
     "bootstrap": "^3.3.7",
     "flag-icon-css": "^2.7.0",
     "icomoon-bower": "^0.1.2",

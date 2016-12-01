@@ -39,14 +39,15 @@ defmodule Extoon.Entry do
     indexes :tags, type: "string", index: "not_analyzed"
 
     indexes :title, type: "string", analyzer: "ja_analyzer"
-    indexes :content, type: "string", analyzer: "ja_analyzer"
+    # indexes :content, type: "string", analyzer: "ja_analyzer"
 
     indexes :duration, type: "long"
     indexes :release_date, type: "date", format: "dateOptionalTime"
 
     indexes :publish, type: "boolean"
 
-    indexes :rubytext, type: "string", analyzer: "rubytext_analyzer", store: true
+    indexes :makerruby, type: "string", analyzer: "ngram_analyzer", store: true
+    indexes :titleruby, type: "string", analyzer: "rubytext_analyzer", store: true
   end
 
   settings do
@@ -83,19 +84,27 @@ defmodule Extoon.Entry do
         type: "custom",
         tokenizer: "kuromoji_pserson_dic",
         filter: ["katakana_readingform", "split_delimiter"]
+
+      tokenizer "ngram_tokenizer",
+        type: "nGram",  min_gram: "2", max_gram: "3",
+        token_chars: ["letter", "digit"]
+      analyzer "ngram_analyzer",
+        type: "custom",
+        tokenizer: "ngram_tokenizer"
     end
   end
 
   def as_indexed_json(st, opts) do
     %{
       maker: st.maker.name,
+      makerruby: st.maker.name,
       category: st.category.name,
       label: get_in(st, [Access.key(:label), Access.key(:name)]),
       series: get_in(st, [Access.key(:series), Access.key(:name)]),
       tags: Enum.map(st.tags, & &1.name),
       title: st.title,
-      rubytext: st.title,
-      content: st.content,
+      titleruby: st.title,
+      # content: st.content,
       duration: st.duration,
       release_date: st.release_date,
       publish: st.publish,
@@ -126,7 +135,7 @@ defmodule Extoon.Entry do
         multi_match = %{
           multi_match: %{
             query: q,
-            fields: ~w(title content maker category label series tags)
+            fields: ~w(title maker category label series tags titleruby makerruby)
           }
         }
         put_in(query, [:query, :filtered, :query], multi_match)
@@ -137,11 +146,15 @@ defmodule Extoon.Entry do
 
   def essuggest(word) do
     query = %{
-      fields: ["rubytext"],
+      size: 8,
+      fields: [],
       query: %{
         filtered: %{
           query: %{
-            match: %{rubytext: word}
+            multi_match: %{
+              query: word,
+              fields: ~w(title maker label titleruby makerruby)
+            }
           },
           filter: %{
             bool: %{
@@ -197,6 +210,14 @@ defmodule Extoon.Entry do
   def query(query, :index) do
     from q in query,
     preload: ^@query_index
+  end
+
+  @query_suggest [
+    :thumbs, :maker #, :label, :series
+  ]
+  def query(query, :suggest) do
+    from q in query,
+    preload: ^@query_suggest
   end
 
   @query_doc [:category, :maker, :label, :series, :tags]

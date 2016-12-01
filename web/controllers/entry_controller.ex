@@ -1,7 +1,10 @@
 defmodule Extoon.EntryController do
   use Extoon.Web, :controller
-  alias Extoon.{Repo, Entry, Category}
+
+  alias Extoon.{Repo, Entry, Category, Thumb}
   alias Extoon.Ecto.Q
+
+  import Ecto.Query, only: [from: 1, from: 2]
 
   plug Extoon.Ctrl.Plug.AssignPath
   plug Extoon.Ctrl.Plug.AssignCategory
@@ -39,13 +42,21 @@ defmodule Extoon.EntryController do
     render conn, "show.html", entry: entry, entries: entries
   end
 
-  def suggest(conn, %{"search" => search}) do
-    results =
-      Entry
-      |> Extoon.ESx.search(Entry.essuggest(search))
-      |> Extoon.ESx.results
+  def suggest(conn, %{"q" => q}) do
+    resources =
+      ConCache.get_or_store :es, "entry:suggest:#{q}", fn ->
+        word =
+          String.split(q, ".")
+          |> List.first
 
-    results
-    |> Enum.map(& &1["fields"]["rubytext"])
+        from(Entry.query(Entry, :suggest))
+        |> Extoon.ESx.search(Entry.essuggest(word))
+        |> Extoon.ESx.records
+        |> Enum.map(&Map.take &1, [
+          :id, :title, :thumbs, :maker # , :label, :series
+        ])
+      end
+
+    render(conn, "suggest.json", resources: resources)
   end
 end
