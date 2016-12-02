@@ -45,21 +45,21 @@ defmodule Extoon.MyHelpers do
 
   def latest_entries(%{} = st, where), do: latest_entries st.__struct__, where
   def latest_entries(mod, where) do
-    key = "latest_entries:#{Funcs.thename mod}:#{inspect where}"
+    key = "entries:latest:#{Funcs.thename mod}:#{inspect where}"
 
-    ConCache.get_or_store :latest_entries, key, fn ->
+    ConCache.get_or_store :entries, key, fn ->
       qs =
         from(q in Entry, order_by: [desc: q.id], limit: 4)
         |> Entry.query(:index)
+        |> Entry.published
         |> Entry.with_relation(mod)
-      # |> Entry.released
 
       from([q, j] in qs, where: ^where)
       |> Repo.all
     end
   end
 
-  def popular_entries do
+  def hottest_entries do
 
   end
 

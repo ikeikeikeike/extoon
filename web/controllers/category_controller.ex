@@ -5,6 +5,8 @@ defmodule Extoon.CategoryController do
 
   plug Extoon.Ctrl.Plug.AssignPath
   plug Extoon.Ctrl.Plug.AssignCategory
+  plug Extoon.Ctrl.Plug.AssignLatest
+  plug Extoon.Ctrl.Plug.AssignHottest
 
   def index(conn, %{"alias" => alias} = params) do
     qs =
@@ -54,7 +56,7 @@ defmodule Extoon.CategoryController do
     render conn, "latest.html", entries: entries, category: nil
   end
 
-  def popular(conn, %{"alias" => alias} = params) do
+  def hottest(conn, %{"alias" => alias} = params) do
 
   end
 

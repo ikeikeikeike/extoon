@@ -8,6 +8,8 @@ defmodule Extoon.EntryController do
 
   plug Extoon.Ctrl.Plug.AssignPath
   plug Extoon.Ctrl.Plug.AssignCategory
+  plug Extoon.Ctrl.Plug.AssignLatest
+  plug Extoon.Ctrl.Plug.AssignHottest
 
   def index(conn, params) do
     entryqs = Entry.query(Entry, :index)

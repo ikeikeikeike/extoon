@@ -51,8 +51,8 @@ defmodule Extoon.Router do
       get "/latest/:alias", CategoryController, :latest
       get "/latest", CategoryController, :latest
 
-      get "/popular/:alias", CategoryController, :popular
-      get "/popular", CategoryController, :popular
+      get "/hottest/:alias", CategoryController, :hottest
+      get "/hottest", CategoryController, :hottest
 
       get "/:alias", CategoryController, :index
       get "/", CategoryController, :index
