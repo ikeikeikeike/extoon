@@ -30,6 +30,28 @@ defmodule Extoon.EntryController do
     render conn, "index.html", entries: entries
   end
 
+  def latest(conn, params) do
+    qs =
+      Entry.query(Entry, :index)
+      |> Entry.published
+      |> from(order_by: [desc: :id], limit: 32)
+
+    entries = Repo.paginate(qs, params)
+
+    render conn, "index.html", entries: entries
+  end
+
+  def hottest(conn, params) do
+    qs =
+      Entry.query(Entry, :index)
+      |> Entry.published
+      |> from(order_by: [desc: :id], limit: 32)
+
+    entries = Repo.paginate(qs, params)
+
+    render conn, "index.html", entries: entries
+  end
+
   def show(conn, %{"id" => id} = params) do
     entry = Repo.get!(Entry.query(Entry, :show), id)
 

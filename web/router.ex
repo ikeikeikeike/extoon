@@ -20,6 +20,8 @@ defmodule Extoon.Router do
 
     scope "/e" do
       get "/", EntryController, :index
+      get "/latest", EntryController, :latest
+      get "/hottest", EntryController, :hottest
     end
 
     scope "/s" do

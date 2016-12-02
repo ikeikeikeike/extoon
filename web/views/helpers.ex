@@ -173,4 +173,18 @@ defmodule Extoon.MyHelpers do
   end
   def pickup_in(_, _), do: nil
 
+  def dpath(method, args) when is_list(args) do
+    apply Extoon.Router.Helpers, :"#{method}", args
+  end
+  def dpath(method, conn, as, param)
+  when not is_nil(param) and param != "" do
+    dpath method, [conn, as, param]
+  end
+  def dpath(method, conn, as, _param) do
+    dpath method, [conn, as]
+  end
+  def dpath(method, conn, as) do
+    dpath method, [conn, as]
+  end
+
 end
