@@ -23,6 +23,8 @@ defmodule Extoon.Entry do
     field :duration, :integer
     field :release_date, Ecto.Date
 
+    field :sort, :integer
+
     # field :review, :boolean, default: false
     # field :removal, :boolean, default: false
     field :publish, :boolean, default: false
@@ -171,7 +173,7 @@ defmodule Extoon.Entry do
   @requires ~w(title)a
   @options ~w(
     maker_id category_id series_id label_id
-    content duration release_date
+    content duration release_date sort
     publish published_at updated_at
   )a
 

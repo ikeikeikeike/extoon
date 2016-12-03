@@ -24,7 +24,7 @@ defmodule Extoon.EntryController do
 
   def latest(conn, params) do
     qs =
-      from(Entry, order_by: [desc: :id], limit: 32)
+      from(Entry, order_by: [desc: :id])
       |> Entry.query(:index)
       |> Entry.published
 
@@ -35,7 +35,7 @@ defmodule Extoon.EntryController do
 
   def hottest(conn, params) do
     qs =
-      from(Entry, order_by: [desc: :id], limit: 32)
+      from(Entry, order_by: [asc: :sort])
       |> Entry.query(:index)
       |> Entry.published
 

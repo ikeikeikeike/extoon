@@ -13,6 +13,8 @@ defmodule Extoon.Repo.Migrations.CreateEntry do
       add :duration, :integer
       add :release_date, :date
 
+      add :sort, :integer, default: nil
+
       # add :review, :boolean
       # add :removal, :boolean
       add :publish, :boolean, default: false
@@ -25,6 +27,7 @@ defmodule Extoon.Repo.Migrations.CreateEntry do
     create index(:entries, [:maker_id])
     create index(:entries, [:category_id])
     create index(:entries, [:publish])
+    create index(:entries, [:sort])
 
   end
 end

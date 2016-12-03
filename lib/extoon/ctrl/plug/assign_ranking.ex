@@ -16,12 +16,16 @@ defmodule Extoon.Ctrl.Plug.AssignRanking do
         ids
       end
 
+    key =
+      inspect(ids)
+      |> :erlang.md5
+      |> Base.encode16(case: :lower)
+
     ranked_entries =
-      ConCache.get_or_store :entries, "ranking:all:#{inspect ids}", fn ->
+      ConCache.get_or_store :entries, "ranking:all:#{key}", fn ->
         ranking =
           from(q in Entry, where: q.id in ^ids)
           |> Entry.query(:index)
-          |> Entry.published
           |> Repo.all
 
         Enum.map ids, fn id ->
