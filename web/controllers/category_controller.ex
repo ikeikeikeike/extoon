@@ -10,8 +10,12 @@ defmodule Extoon.CategoryController do
 
   def index(conn, %{"alias" => alias} = params) do
     qs =
-      from [q, j] in Entry.with_relation(Entry.query(Entry, :index), Category),
-      where: not is_nil(q.maker_id) and j.alias == ^alias,
+      Entry.query(Entry, :index)
+      |> Entry.with_relation(Category)
+      |> Entry.published
+    qs =
+      from [q, j] in qs,
+      where: j.alias == ^alias,
       order_by: [desc: q.id],
       limit: 32
 
@@ -22,10 +26,11 @@ defmodule Extoon.CategoryController do
 
   def index(conn, params) do
     qs =
-      from [q, j] in Entry.with_relation(Entry.query(Entry, :index), Category),
-      where: not is_nil(q.maker_id),
-      order_by: [desc: q.id],
-      limit: 32
+      Entry.query(Entry, :index)
+      |> Entry.with_relation(Category)
+      |> Entry.published
+    qs =
+      from([q, j] in qs, order_by: [desc: q.id], limit: 32)
 
     entries = Repo.paginate(qs, params)
 
@@ -34,8 +39,12 @@ defmodule Extoon.CategoryController do
 
   def latest(conn, %{"alias" => alias} = params) do
     qs =
-      from [q, j] in Entry.with_relation(Entry.query(Entry, :index), Category),
-      where: not is_nil(q.maker_id) and j.alias == ^alias,
+      Entry.query(Entry, :index)
+      |> Entry.with_relation(Category)
+      |> Entry.published
+    qs =
+      from [q, j] in qs,
+      where: j.alias == ^alias,
       order_by: [desc: q.id],
       limit: 32
 
@@ -46,10 +55,11 @@ defmodule Extoon.CategoryController do
 
   def latest(conn, params) do
     qs =
-      from [q, j] in Entry.with_relation(Entry.query(Entry, :index), Category),
-      where: not is_nil(q.maker_id),
-      order_by: [desc: q.id],
-      limit: 32
+      Entry.query(Entry, :index)
+      |> Entry.with_relation(Category)
+      |> Entry.published
+    qs =
+      from([q, j] in qs, order_by: [desc: q.id], limit: 32)
 
     entries = Repo.paginate(qs, params)
 

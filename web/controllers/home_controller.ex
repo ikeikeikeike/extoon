@@ -9,14 +9,10 @@ defmodule Extoon.HomeController do
   plug Extoon.Ctrl.Plug.AssignHottest
 
   def index(conn, params) do
-    entryqs =
-      Entry.query(Entry, :index)
-      |> Entry.published
-
     qs =
-      from q in entryqs,
-      order_by: [desc: q.id],
-      limit: 32
+      from(q in Entry, order_by: [desc: q.id], limit: 35)
+      |> Entry.query(:index)
+      |> Entry.published
 
     entries = Repo.paginate(qs, params)
 

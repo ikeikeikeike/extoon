@@ -12,20 +12,8 @@ defmodule Extoon.EntryController do
   plug Extoon.Ctrl.Plug.AssignHottest
 
   def index(conn, params) do
-    entryqs = Entry.query(Entry, :index)
-      # |> Entry.published
-
-    # XXX: Temporary fix
-    # qs =
-      # from q in entryqs,
-      # where: not is_nil(q.maker_id),
-      # order_by: [desc: q.id],
-      # limit: 32
-
-    # entries = Repo.paginate(qs, params)
-
     entries =
-      entryqs
+      Entry.query(Entry, :index)
       |> Extoon.ESx.search(Entry.esquery(params))
       |> Extoon.ESx.paginate(params)
 
@@ -34,9 +22,9 @@ defmodule Extoon.EntryController do
 
   def latest(conn, params) do
     qs =
-      Entry.query(Entry, :index)
+      from(Entry, order_by: [desc: :id], limit: 32)
+      |> Entry.query(:index)
       |> Entry.published
-      |> from(order_by: [desc: :id], limit: 32)
 
     entries = Repo.paginate(qs, params)
 
@@ -45,9 +33,9 @@ defmodule Extoon.EntryController do
 
   def hottest(conn, params) do
     qs =
-      Entry.query(Entry, :index)
+      from(Entry, order_by: [desc: :id], limit: 32)
+      |> Entry.query(:index)
       |> Entry.published
-      |> from(order_by: [desc: :id], limit: 32)
 
     entries = Repo.paginate(qs, params)
 
@@ -56,12 +44,7 @@ defmodule Extoon.EntryController do
 
   def show(conn, %{"id" => id} = params) do
     entry = Repo.get!(Entry.query(Entry, :show), id)
-
-    qs =
-      from q in Entry.published(Entry.query(Entry, :index)),
-      order_by: [desc: q.id],
-      limit: 4
-    entries = Repo.all(qs)
+    entries = Enum.take_random(conn.assigns[:latest_entries], 4)
 
     render conn, "show.html", entry: entry, entries: entries
   end

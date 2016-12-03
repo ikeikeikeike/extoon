@@ -238,15 +238,6 @@ defmodule Extoon.Entry do
     ]
   end
 
-  def categories(id) do
-    from f in query(__MODULE__, :index),
-      join: j in assoc(f, :category),
-      where: j.id == f.category_id
-        and f.category_id == ^id,
-      order_by: [desc: f.id],
-      limit: 5
-  end
-
   def with_relation(query, Category = mod), do: from q in query, join: j in assoc(q, :category), where: j.id == q.category_id
   def with_relation(query, Series = mod), do: from q in query, join: j in assoc(q, :series), where: j.id == q.series_id
   def with_relation(query, Maker = mod), do: from q in query, join: j in assoc(q, :maker), where: j.id == q.maker_id

@@ -8,7 +8,7 @@ defmodule Extoon.Ctrl.Plug.AssignLatest do
   def call(conn, _opts) do
     latest_entries =
       ConCache.get_or_store :entries, "entries:assign_latest", fn ->
-        from(q in Entry, order_by: [desc: q.id], limit: 4)
+        from(q in Entry, order_by: [desc: q.id], limit: 35)
         |> Entry.query(:index)
         |> Entry.published
         |> Repo.all

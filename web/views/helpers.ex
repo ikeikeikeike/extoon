@@ -39,17 +39,24 @@ defmodule Extoon.MyHelpers do
       entries when length(entries) > 5 ->
         entries
       entries ->
-        entries ++ Repo.all(Entry.categories(entry.id))
+        alters =
+          entry.category
+          |> latest_entries([category_id: entry.category.id], 35)
+          |> Enum.take_random(5)
+
+        entries ++ alters
     end
   end
 
-  def latest_entries(%{} = st, where), do: latest_entries st.__struct__, where
-  def latest_entries(mod, where) do
-    key = "entries:latest:#{Funcs.thename mod}:#{inspect where}"
+  def latest_entries(%{} = st, where),        do: latest_entries st.__struct__, where, 4
+  def latest_entries(mod, where),             do: latest_entries mod, where, 4
+  def latest_entries(%{} = st, where, limit), do: latest_entries st.__struct__, where, limit
+  def latest_entries(mod, where, limit) do
+    key = "entries:latest:#{Funcs.thename mod}:#{inspect where}:limit:#{limit}"
 
     ConCache.get_or_store :entries, key, fn ->
       qs =
-        from(q in Entry, order_by: [desc: q.id], limit: 4)
+        from(q in Entry, order_by: [desc: q.id], limit: ^limit)
         |> Entry.query(:index)
         |> Entry.published
         |> Entry.with_relation(mod)
