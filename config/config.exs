@@ -36,6 +36,9 @@ config :esx, ESx.Model,
   port: 9200,
   trace: true
 
+config :extoon, :redis,
+  ranking: "redis://127.0.0.1:6379/15"
+
 config :scrivener_html,
   routes_helper: Extoon.Router.Helpers
 

@@ -30,6 +30,7 @@ defmodule Extoon.Mixfile do
        :poison,
 
        :exsentry,
+       :rdtype,
        :common_device_detector,
 
        :floki,
@@ -77,6 +78,7 @@ defmodule Extoon.Mixfile do
       {:poison, "~> 2.0"},
       {:sweet_xml, "~> 0.5"},
       {:yamerl, "~> 0.3", override: true},
+      {:rdtype, github: "ikeikeikeike/rdtype"},
       {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
       {:exsentry, "~> 0.7"},
       {:floki, "~> 0.11"},
