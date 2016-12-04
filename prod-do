@@ -1,0 +1,127 @@
+#!/bin/bash -eu
+VERSION=`cat VERSION`
+
+USER=`cat USER`
+BUILDING=`cat BUILDING`
+PRODUCTION=`cat PRODUCTION`
+
+deploy() {
+    build
+    download $VERSION
+    upload
+    upgrade $VERSION
+}
+
+version() {
+    echo $VERSION
+}
+
+fixversion() {
+    hg commit -m "fix version $VERSION" mix.exs VERSION
+    hg push
+}
+
+build() {
+    fixversion
+
+    ssh ${USER}@${BUILDING} "rm -rf src/extoon/priv/static/css/*"
+    ssh ${USER}@${BUILDING} "rm -rf src/extoon/priv/static/js/*"
+    ssh ${USER}@${BUILDING} "cd src/extoon && bash build"
+}
+
+download() {
+    rsync -avr --stats ${USER}@${BUILDING}:~/src/extoon/rel .
+
+    (cd rel/extoon
+        rm -rf  static
+        ln -fs lib/extoon-${VERSION}/priv/static
+    )
+}
+
+upload() {
+    # upload staging
+    rsync -avr --stats rel ${USER}@${PRODUCTION}:~/
+}
+
+upgrade() {
+    # upgrade
+    ssh ${USER}@${PRODUCTION} "(cd src/extoon; hg pull ; hg up -C)"
+    ssh ${USER}@${PRODUCTION} "sh rel/extoon/bin/extoon upgrade $1"
+
+    restartsrv
+
+    echo;deployed
+}
+
+restartsrv() {
+    set +e
+
+    OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/extoon/bin/extoon' | grep -v 'grep'"`
+    echo;echo "PRODUCTION OUT: $OUT"
+    ssh ${USER}@${PRODUCTION} "sudo systemctl restart phoenix"
+    ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
+    ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
+    ssh ${USER}@${PRODUCTION} "sudo systemctl start phoenix"
+    OUT=`ssh ${USER}@${PRODUCTION} "ps aux | grep '/rel/extoon/bin/extoon' | grep -v 'grep'"`
+    echo "PRODUCTION OUT: $OUT"
+
+    set -e
+}
+
+downgrade() {
+    # upgrade
+    ssh ${USER}@${PRODUCTION} "sh rel/extoon/bin/extoon downgrade $1"
+
+    echo;deployed
+}
+
+remove() {
+    rm -fr rel/extoon/lib/extoon-$1
+    rm -fr rel/extoon/releases/$1
+
+    rsync -avr --delete --stats rel/extoon/lib      ${USER}@${BUILDING}:~/src/extoon/rel/extoon/
+    rsync -avr --delete --stats rel/extoon/releases ${USER}@${BUILDING}:~/src/extoon/rel/extoon/
+
+    rsync -avr --delete --stats rel/extoon/lib      ${USER}@${PRODUCTION}:~/rel/extoon/
+    rsync -avr --delete --stats rel/extoon/releases ${USER}@${PRODUCTION}:~/rel/extoon/
+}
+
+deployed() {
+    # upgrade
+    echo "PRODUCTION"
+    ssh ${USER}@${PRODUCTION} "ls -t rel/extoon/releases"
+}
+
+case "$1" in
+    deploy)             deploy            ;;
+    version)            version           ;;
+    fixversion)         fixversion        ;;
+    build)              build             ;;
+    upload)             upload            ;;
+    download)           download          ;;
+    upgrade)            upgrade $2        ;;
+    downgrade)          downgrade $2      ;;
+    deployed)           deployed          ;;
+    remove)             remove $2         ;;
+    restart)            restartsrv        ;;
+    *) echo "
+Usage:
+    $0 <command> [options]
+
+Commands:
+    deploy                    Deployment all
+    version                   Get package version.
+    fixversion <version>      Fix package version.
+    build      [options]      Build packages.
+    upload                    UploadDeplo packages.
+    download   <version>      Download rel.
+    upgrade    <version>      Upload rel.
+    downgrade  <version>      Hot deploy server.
+    deployed                  Deployed versions.
+    remove                    Removing before versions.
+    restart                   Restarting servers
+
+" >&2
+       exit 1
+       ;;
+esac

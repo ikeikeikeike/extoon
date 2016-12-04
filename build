@@ -1,0 +1,12 @@
+#!/bin/bash
+source ~/.bash_profile
+
+hg pull
+hg up -C
+
+# mix deps.get
+# mix release.clean --implode --no-confirm
+mix deps.get
+
+MIX_ENV=prod mix release --env=prod
+# MIX_ENV=prod mix do phoenix.digest, compile, release --verbosity=verbose
