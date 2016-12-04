@@ -47,6 +47,13 @@ defmodule Extoon.Mixfile do
        :scrivener_esx,
        :scrivener_ecto,
        :scrivener_html,
+
+       :arc,
+       :exactor,
+       :exjsx,
+       :jsx,
+       :sweet_xml,
+       :timex_ecto,
      ]]
   end
 
@@ -92,6 +99,7 @@ defmodule Extoon.Mixfile do
       {:scrivener_ecto, "~> 1.0"},
       {:scrivener_html, "~> 1.1"},
       {:scrivener_esx, github: "ikeikeikeike/scrivener_esx"},
+      {:distillery, "~> 0.10"},
     ]
   end
 
