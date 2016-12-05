@@ -8,5 +8,5 @@ hg up -C
 # mix release.clean --implode --no-confirm
 mix deps.get
 
-MIX_ENV=prod mix release --env=prod
-# MIX_ENV=prod mix do phoenix.digest, compile, release --verbosity=verbose
+MIX_ENV=prod mix do phoenix.digest, compile
+MIX_ENV=prod mix release --env=prod --upgrade --verbose
