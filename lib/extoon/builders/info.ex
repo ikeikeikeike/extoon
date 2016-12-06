@@ -14,7 +14,7 @@ defmodule Extoon.Builders.Info do
     queryable =
       from q in Entry.initialized(Entry),
         order_by: q.updated_at,
-        limit: 10
+        limit: 20
 
     # ExSentry.capture_exceptions fn ->
       queryable

@@ -3,7 +3,7 @@ defmodule Extoon.Mixfile do
 
   def project do
     [app: :extoon,
-     version: "0.0.1",
+     version: version(),
      elixir: "~> 1.2",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
@@ -11,6 +11,12 @@ defmodule Extoon.Mixfile do
      start_permanent: Mix.env == :prod,
      aliases: aliases(),
      deps: deps()]
+  end
+
+  defp version do
+    v = "0.4.5"
+    File.write! "VERSION", v
+    v
   end
 
   # Configuration for the OTP application.
@@ -30,6 +36,7 @@ defmodule Extoon.Mixfile do
        :poison,
 
        :exsentry,
+       :quantum,
        :rdtype,
        :common_device_detector,
 
@@ -85,6 +92,7 @@ defmodule Extoon.Mixfile do
       {:poison, "~> 2.0"},
       {:sweet_xml, "~> 0.5"},
       {:yamerl, "~> 0.3", override: true},
+      {:quantum, "~> 1.7"},
       {:rdtype, github: "ikeikeikeike/rdtype"},
       {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
       {:exsentry, "~> 0.7"},
