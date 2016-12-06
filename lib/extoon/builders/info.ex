@@ -12,7 +12,7 @@ defmodule Extoon.Builders.Info do
   def run, do: run []
   def run([]) do
     queryable =
-      from q in Entry.initialized(Entry),
+      from q in Entry.buildabled(Entry),
         order_by: q.updated_at,
         limit: 20
 

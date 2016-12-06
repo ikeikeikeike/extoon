@@ -2,8 +2,7 @@ defmodule Extoon.Builders.Publish do
   import Extoon.Builders.Base
   import Ecto.Query, only: [from: 2]
 
-  alias Extoon.{ESx, Repo}
-  alias Extoon.Entry
+  alias Extoon.{Repo, Entry}
 
   require Logger
 
@@ -21,7 +20,7 @@ defmodule Extoon.Builders.Publish do
         Repo.transaction fn ->
           try do
             with {:ok, entry} <- Repo.update(changeset),
-                 {:ok, resp}  <- ESx.index_document(entry) do
+                 {:ok, resp}  <- Extoon.ESx.index_document(entry) do
               resp
             else
               {_, err} ->

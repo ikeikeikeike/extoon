@@ -284,9 +284,9 @@ defmodule Extoon.Entry do
     # |> unremoved
   end
 
-  # default contents.
+  # buildable contents.
   #
-  def initialized(query) do
+  def buildabled(query) do
     query
     |> unreleased
     |> uninfoabled

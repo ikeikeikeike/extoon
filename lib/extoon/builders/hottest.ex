@@ -3,8 +3,7 @@ defmodule Extoon.Builders.Hottest do
   import Extoon.Checks, only: [blank?: 1]
   import Ecto.Query, only: [from: 2]
 
-  alias Extoon.{ESx, Repo}
-  alias Extoon.Entry
+  alias Extoon.{Repo, Entry}
 
   require Logger
 
