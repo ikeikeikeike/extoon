@@ -34,13 +34,13 @@ defmodule Extoon.MyHelpers do
     sentries = Map.get series || %{}, :entries, []
 
     entries =
-      [lentries, maker.entries, sentries]
+      [sentries, lentries, maker.entries]
       |> List.flatten
       |> Enum.uniq_by(& &1.id)
-      |> Enum.reverse
+      |> Enum.filter(& &1.id != entry.id)
 
     case entries do
-      entries when length(entries) > 5 ->
+      entries when length(entries) > 0 ->
         entries
       entries ->
         alters =

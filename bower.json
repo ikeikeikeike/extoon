@@ -17,6 +17,7 @@
     "flag-icon-css": "^2.7.0",
     "icomoon-bower": "^0.1.2",
     "slick-carousel": "^1.6.0",
-    "font-awesome": "fontawesome#^4.7.0"
+    "font-awesome": "fontawesome#^4.7.0",
+    "slideout.js": "^1.0.1"
   }
 }
