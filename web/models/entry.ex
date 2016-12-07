@@ -245,12 +245,17 @@ defmodule Extoon.Entry do
   def with_relation(query, Maker = mod), do: from q in query, join: j in assoc(q, :maker), where: j.id == q.maker_id
   def with_relation(query, LAbel = mod), do: from q in query, join: j in assoc(q, :label), where: j.id == q.label_id
 
-  def released(query),        do: from q in query, where: q.publish == true
-  def unreleased(query),      do: from q in query, where: q.publish == false
-  def infoabled(query),       do: from q in query, where: not is_nil(q.maker_id) and not is_nil(q.category_id)
-  def uninfoabled(query),     do: from q in query, where: is_nil(q.maker_id) and is_nil(q.category_id)
-  def contentabled(query),    do: from q in query, where: q.content != "" and not is_nil(q.content)
-  def uncontentabled(query),  do: from q in query, where: q.content == "" or is_nil(q.content)
+  def release(query),       do: from q in query, where: q.publish == true
+  def unrelease(query),     do: from q in query, where: q.publish == false
+
+  def infoable(query),      do: from q in query, where: not is_nil(q.maker_id) and not is_nil(q.category_id)
+  def uninfoable(query),    do: from q in query, where: is_nil(q.maker_id) and is_nil(q.category_id)
+
+  def contentable(query),   do: from q in query, where: q.content != "" and not is_nil(q.content)
+  def uncontentable(query), do: from q in query, where: q.content == "" or is_nil(q.content)
+
+  def buildable(query),     do: from q in query, join: j in assoc(q, :info), where: not is_nil(j.info)
+
   # def removed(query),       do: from p in query, where: p.removal == true
   # def unremoved(query),     do: from p in query, where: p.removal == false
 
@@ -258,9 +263,9 @@ defmodule Extoon.Entry do
   #
   def published(query) do
     query
-    |> released
-    |> infoabled
-    |> contentabled
+    |> release
+    |> infoable
+    |> contentable
     # |> unremoved
   end
 
@@ -268,29 +273,30 @@ defmodule Extoon.Entry do
   #
   def reserved(query) do
     query
-    |> unreleased
-    |> infoabled
-    |> contentabled
+    |> unrelease
+    |> infoable
+    |> contentable
     # |> unremoved
   end
 
   # before reserve status
   #
-  def pre_reserved(query) do
+  def infoabled(query) do
     query
-    |> unreleased
-    |> infoabled
-    |> uncontentabled
+    |> unrelease
+    |> infoable
+    |> uncontentable
     # |> unremoved
   end
 
   # buildable contents.
   #
   def buildabled(query) do
-    query
-    |> unreleased
-    |> uninfoabled
-    |> uncontentabled
+    from(query, preload: :info)
+    |> buildable
+    |> unrelease
+    |> uninfoable
+    |> uncontentable
     # |> unremoved
   end
 

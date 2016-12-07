@@ -70,12 +70,12 @@ defimpl Extoon.Checks, for: Ecto.Date do
   def present?(data), do: not Checks.blank?(data)
 end
 
-defimpl Extoon.Checks, for: Ecto.Association.NotLoaded do
-  alias Extoon.Checks
-  def blank?(%Ecto.Association.NotLoaded{}), do: true
-  def blank?(_), do: false
-  def present?(data), do: not Checks.blank?(data)
-end
+# defimpl Extoon.Checks, for: Ecto.Association.NotLoaded do
+  # alias Extoon.Checks
+  # def blank?(%Ecto.Association.NotLoaded{}), do: true
+  # def blank?(_), do: false
+  # def present?(data), do: not Checks.blank?(data)
+# end
 
 defimpl Extoon.Checks, for: Any do
   def blank?(_),      do: false

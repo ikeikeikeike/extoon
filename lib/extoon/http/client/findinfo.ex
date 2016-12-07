@@ -25,17 +25,26 @@ defmodule Extoon.Http.Client.Findinfo do
 
   def better_choice(items, name), do: better_choice items, name, 2
   def better_choice(items, name, picks) when is_list(items) and is_integer(picks) do
-    items
-    |> Enum.map(fn item ->
-       case Levenshtein.compare(name, item["title"]) do
-         nil   -> nil
-         score -> {score, item}
-       end
+    sorted =
+      items
+      |> Enum.map(fn item ->
+         case Levenshtein.compare(name, item["title"]) do
+           nil   -> nil
+           score -> {score, item}
+         end
+      end)
+      |> Enum.filter(& !!&1)
+      |> Enum.sort(fn {left, _}, {right, _} ->
+        left < right
+      end)
+
+    topscore = List.first sorted
+
+    sorted
+    |> Enum.filter(fn {score, _} ->
+      elem(topscore, 0) == score
     end)
-    |> Enum.filter(& !!&1)
-    |> Enum.sort(& elem(&1, 0) < elem(&2, 0))
     |> Enum.map(& elem(&1, 1))
-    |> Enum.take(picks)
   end
 
   def take(items, both) when is_list(items), do: take items, both, nil

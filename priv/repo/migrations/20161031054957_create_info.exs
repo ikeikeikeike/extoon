@@ -4,11 +4,11 @@ defmodule Extoon.Repo.Migrations.CreateInfo do
   def change do
     create table(:entries_infos) do
       add :assoc_id, :integer
-      add :info, {:array, :map}
+      add :info, :map  # to be jsonb type
 
       timestamps()
     end
-    create index(:entries_infos, [:assoc_id])
+    create index(:entries_infos, [:assoc_id], unique: true)
 
   end
 end

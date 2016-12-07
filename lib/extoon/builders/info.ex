@@ -1,6 +1,6 @@
 defmodule Extoon.Builders.Info do
-  import Extoon.Builders.Base
   import Ecto.Query, only: [from: 2]
+  import Extoon.Builders.Base
 
   alias Extoon.{Repo, Funcs}
   alias Extoon.{Entry, Maker, Label, Series, Category, Tag, Thumb}
@@ -27,16 +27,17 @@ defmodule Extoon.Builders.Info do
   def make_resource(queryable) do
     queryable
     |> Repo.all
-    |> Enum.map(fn entry ->
-      case Findinfo.get(entry.title) do
-        {:ok, res} ->
-          {entry, res.body, %{}}
+    |> Enum.map(& {&1, &1.info.info, %{}})
+    # |> Enum.map(fn entry ->
+      # case Findinfo.get(entry.title) do
+        # {:ok, res} ->
+          # {entry, res.body, %{}}
 
-        {_, _res} ->
-          skip entry, "resource 1"
-      end
-    end)
-    |> Enum.filter(& !!&1)
+        # {_, _res} ->
+          # skip entry, "resource 1"
+      # end
+    # end)
+    # |> Enum.filter(& !!&1)
     |> Enum.map(fn {entry, items, params} ->
       case Findinfo.better_choice(items, entry.title) do
         r when length(r) > 0 ->
@@ -196,8 +197,8 @@ defmodule Extoon.Builders.Info do
   def update(resrces) when is_list(resrces) do
     result =
       Enum.map resrces, fn {entry, items, params} ->
-        params =
-          Map.put(params, :info, %{info: items, assoc_id: entry.id})
+        # params =
+          # Map.put(params, :info, %{info: items, assoc_id: entry.id})
         changeset =
           Entry.info_changeset Repo.preload(entry, [:tags, :thumbs, :info]), params
 
