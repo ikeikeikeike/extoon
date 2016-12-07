@@ -7,6 +7,10 @@ defmodule Extoon.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+
+    plug Extoon.Locale.Plug.AssignLocale
+    plug Extoon.Locale.Plug.HandleLocalizedPath
+    plug Extoon.Locale.Plug.ConfigureGettext
   end
 
   pipeline :api do
@@ -20,6 +24,7 @@ defmodule Extoon.Router do
 
     scope "/e" do
       get "/", EntryController, :index
+      get "/release", EntryController, :release
       get "/latest", EntryController, :latest
       get "/hottest", EntryController, :hottest
     end

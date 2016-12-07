@@ -232,9 +232,9 @@ defmodule Extoon.Entry do
     from q in query,
     preload: [
       :embeds, :urls, :thumbs, :tags, :category,
-      maker: [entries: [:thumbs]],
-      label: [entries: [:thumbs]],
-      series: [entries: [:thumbs]],
+      maker: [entries: [:thumbs, :maker, :category]],
+      label: [entries: [:thumbs, :maker, :category]],
+      series: [entries: [:thumbs, :maker, :category]],
       # category: [entries: ^(from __MODULE__, limit: 5)],
       # ^(from __MODULE__, order_by: [desc: :id]
     ]

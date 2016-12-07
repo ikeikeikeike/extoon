@@ -21,4 +21,33 @@ defmodule Extoon.Gettext do
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
   use Gettext, otp_app: :extoon
+
+  def default_locale do
+    Application.get_env(:extoon, Extoon.Gettext)[:default_locale] || "ja"
+  end
+
+  def find_locale(language_tag) do
+    [language | _] =
+      language_tag
+      |> String.downcase
+      |> String.split("-", parts: 2)
+
+    Gettext.known_locales(__MODULE__)
+
+    if language in Gettext.known_locales(__MODULE__) do
+      language
+    else
+      nil
+    end
+  end
+
+  def supported_locales do
+    known = Gettext.known_locales(Extoon.Gettext)
+    allowed = Application.get_env(:extoon, Extoon.Gettext)[:locales]
+
+    Set.intersection(Enum.into(known, HashSet.new), Enum.into(allowed, HashSet.new))
+    |> Set.to_list
+  end
+
+
 end

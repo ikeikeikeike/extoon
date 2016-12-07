@@ -7,6 +7,10 @@ defmodule Extoon.MyHelpers do
   alias Extoon.{Entry, Thumb}
   alias Extoon.{Funcs, Levenshtein}
 
+  def locale do
+    Gettext.get_locale(Extoon.Gettext)
+  end
+
   def thumb(thumbs) do
     if thumb = List.first(thumbs), do: Thumb.get_thumb(thumb), else: nil
   end
