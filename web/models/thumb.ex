@@ -36,4 +36,18 @@ defmodule Extoon.Thumb do
   def get_thumb(st), do: ThumbUploader.url {st.src, st}
   def get_thumb(st, version), do: ThumbUploader.url {st.src, st}, version
 
+  defimpl Extoon.Checks, for: __MODULE__ do
+    alias Extoon.Checks
+
+    def present?(%{id: id}) do
+      Checks.present?(id)
+    end
+    def present?(_) do
+      false
+    end
+    def blank?(data) do
+      not Checks.present?(data)
+    end
+  end
+
 end

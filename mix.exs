@@ -14,8 +14,7 @@ defmodule Extoon.Mixfile do
   end
 
   defp version do
-
-    v = "0.4.11"
+    v = "0.4.12"
     File.write! "VERSION", v
     v
   end
@@ -109,6 +108,7 @@ defmodule Extoon.Mixfile do
       {:scrivener_html, "~> 1.1"},
       {:scrivener_esx, github: "ikeikeikeike/scrivener_esx"},
       {:distillery, "~> 0.10"},
+      {:credo, "~> 0.5", only: [:dev, :test]},
     ]
   end
 
