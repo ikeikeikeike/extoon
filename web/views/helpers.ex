@@ -198,4 +198,17 @@ defmodule Extoon.MyHelpers do
     dpath method, [conn, as]
   end
 
+  def active?(conn, path) when is_binary(path) do
+    active? conn, [path]
+  end
+  def active?(conn, [path|paths]) do
+    cond do
+      path in conn.path_info ->
+        true
+      true ->
+        active? conn, paths
+    end
+  end
+  def active?(conn, _), do: false
+
 end
