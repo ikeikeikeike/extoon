@@ -33,6 +33,17 @@ defmodule Extoon.EntryController do
     render conn, "index.html", entries: entries
   end
 
+  def prerelease(conn, params) do
+    qs =
+      from(Entry, order_by: [desc: :release_date])
+      |> Entry.query(:index)
+      |> Entry.prereleased
+
+    entries = Repo.paginate(qs, params)
+
+    render conn, "index.html", entries: entries
+  end
+
   def latest(conn, params) do
     qs =
       from(Entry, order_by: [desc: :id])

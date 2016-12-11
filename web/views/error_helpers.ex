@@ -37,4 +37,9 @@ defmodule Extoon.ErrorHelpers do
       Gettext.dgettext(Extoon.Gettext, "errors", msg, opts)
     end
   end
+  def translate_error(msg) do
+    Gettext.dgettext(Extoon.Gettext, "errors", msg)
+  end
+
+
 end

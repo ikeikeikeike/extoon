@@ -11,7 +11,7 @@ defmodule Extoon.Builders.Publish do
     queryable =
       from q in Entry.reserved(Entry.query(Entry, :doc)),
         order_by: q.updated_at,
-        limit: 21
+        limit: 20
 
     publish queryable
   end
@@ -25,11 +25,9 @@ defmodule Extoon.Builders.Publish do
           try do
             with {:ok, entry} <- Repo.update(changeset),
                  {:ok, resp}  <- Extoon.ESx.index_document(entry) do
-              IO.inspect "ok: #{inspect [entry.id, entry.publish]}"
               resp
             else
               {_, err} ->
-                IO.inspect "setback: #{inspect [entry.id, entry.publish]}"
                 setback entry, err
             end
           rescue

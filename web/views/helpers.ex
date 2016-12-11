@@ -7,6 +7,17 @@ defmodule Extoon.MyHelpers do
   alias Extoon.{Entry, Thumb}
   alias Extoon.{Funcs, Levenshtein}
 
+  def translate_default({msg, opts}) do
+    if count = opts[:count] do
+      Gettext.dngettext(Extoon.Gettext, "default", msg, msg, count || 0, opts)
+    else
+      Gettext.dgettext(Extoon.Gettext, "default", msg, opts)
+    end
+  end
+  def translate_default(msg) do
+    Gettext.dgettext(Extoon.Gettext, "default", msg || "")
+  end
+
   def locale do
     Gettext.get_locale(Extoon.Gettext)
   end
@@ -196,6 +207,23 @@ defmodule Extoon.MyHelpers do
   end
   def dpath(method, conn, as) do
     dpath method, [conn, as]
+  end
+
+  def what?(conn, :path) do
+    routes = Extoon.Router.__routes__
+
+    transformed =
+      Enum.reduce routes, %{}, fn r, acc ->
+        Map.merge acc, %{r.path => "#{r.helper}_#{r.opts}"}
+      end
+
+    key = conn.request_path
+    case transformed do
+      %{^key => name} ->
+        name
+      _ ->
+        nil
+    end
   end
 
   def active?(conn, path) when is_binary(path) do

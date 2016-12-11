@@ -51,7 +51,7 @@ defmodule Extoon.CategoryController do
 
     entries = Repo.paginate(qs, params)
 
-    render conn, "latest.html", entries: entries, category: Repo.get_by(Category, alias: alias)
+    render conn, "index.html", entries: entries, category: Repo.get_by(Category, alias: alias)
   end
 
   def latest(conn, params) do
@@ -64,11 +64,37 @@ defmodule Extoon.CategoryController do
 
     entries = Repo.paginate(qs, params)
 
-    render conn, "latest.html", entries: entries, category: nil
+    render conn, "index.html", entries: entries, category: nil
   end
 
   def hottest(conn, %{"alias" => alias} = params) do
+    qs =
+      Entry.query(Entry, :index)
+      |> Entry.with_relation(Category)
+      |> Entry.published
+    qs =
+      from [q, j] in qs,
+      where: j.alias == ^alias,
+      order_by: [asc: q.sort],
+      limit: 32
 
+    entries = Repo.paginate(qs, params)
+
+    render conn, "hottest.html", entries: entries, category: Repo.get_by(Category, alias: alias)
   end
+
+  def hottest(conn, params) do
+    qs =
+      Entry.query(Entry, :index)
+      |> Entry.with_relation(Category)
+      |> Entry.published
+    qs =
+      from([q, j] in qs, order_by: [asc: q.sort], limit: 32)
+
+    entries = Repo.paginate(qs, params)
+
+    render conn, "hottest.html", entries: entries, category: nil
+  end
+
 
 end
