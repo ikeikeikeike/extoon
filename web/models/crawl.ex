@@ -1,5 +1,6 @@
 defmodule Extoon.Crawl do
   use Extoon.Web, :model
+  use Extoon.Checks.Ecto
 
   schema "crawls" do
     field :state, :string
@@ -16,20 +17,6 @@ defmodule Extoon.Crawl do
     st
     |> cast(params, [:state, :name, :info])
     |> validate_required([:state, :name, :info])
-  end
-
-  defimpl Extoon.Checks, for: __MODULE__ do
-    alias Extoon.Checks
-
-    def present?(%{id: id}) do
-      Checks.present?(id)
-    end
-    def present?(_) do
-      false
-    end
-    def blank?(data) do
-      not Checks.present?(data)
-    end
   end
 
 end

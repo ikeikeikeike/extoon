@@ -1,5 +1,6 @@
 defmodule Extoon.Info do
   use Extoon.Web, :model
+  use Extoon.Checks.Ecto
 
   schema "infos" do
     field :assoc_id, :integer
@@ -18,20 +19,6 @@ defmodule Extoon.Info do
     st
     |> cast(params, @requires, @options)
     |> validate_required(@requires)
-  end
-
-  defimpl Extoon.Checks, for: __MODULE__ do
-    alias Extoon.Checks
-
-    def present?(%{id: id}) do
-      Checks.present?(id)
-    end
-    def present?(_) do
-      false
-    end
-    def blank?(data) do
-      not Checks.present?(data)
-    end
   end
 
 end

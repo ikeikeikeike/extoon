@@ -1,5 +1,6 @@
 defmodule Extoon.Tag do
   use Extoon.Web, :model
+  use Extoon.Checks.Ecto
 
   schema "tags" do
     many_to_many :entries, Extoon.Entry, join_through: "entries_tags"
@@ -26,20 +27,6 @@ defmodule Extoon.Tag do
     |> cast(params, @requires, @options)
     |> validate_required(@requires)
     |> unique_constraint(:name)
-  end
-
-  defimpl Extoon.Checks, for: __MODULE__ do
-    alias Extoon.Checks
-
-    def present?(%{id: id}) do
-      Checks.present?(id)
-    end
-    def present?(_) do
-      false
-    end
-    def blank?(data) do
-      not Checks.present?(data)
-    end
   end
 
 end
