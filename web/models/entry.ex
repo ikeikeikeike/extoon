@@ -1,4 +1,6 @@
 defmodule Extoon.Entry do
+  @moduledoc "Ecto Extoon.Entry"
+
   use Extoon.Web, :model
   use Extoon.Checks.Ecto
   use ESx.Schema
@@ -11,13 +13,16 @@ defmodule Extoon.Entry do
     belongs_to :series, Series
     belongs_to :category, Category
 
-    has_one :info, {"entries_infos", Info}, foreign_key: :assoc_id, on_delete: :delete_all, on_replace: :delete
+    has_one :info, {"entries_infos", Info}, foreign_key: :assoc_id,
+      on_delete: :delete_all, on_replace: :delete
 
     has_many :urls, EntryUrl, on_delete: :delete_all
     has_many :embeds, EntryEmbed, on_delete: :delete_all
-    has_many :thumbs, {"entries_thumbs", Thumb}, foreign_key: :assoc_id, on_delete: :delete_all, on_replace: :delete
+    has_many :thumbs, {"entries_thumbs", Thumb}, foreign_key: :assoc_id,
+      on_delete: :delete_all, on_replace: :delete
 
-    many_to_many :tags, Tag, join_through: "entries_tags", on_delete: :delete_all, on_replace: :delete
+    many_to_many :tags, Tag, join_through: "entries_tags",
+      on_delete: :delete_all, on_replace: :delete
 
     field :title, :string
     field :content, :string
@@ -49,8 +54,10 @@ defmodule Extoon.Entry do
 
     indexes :publish, type: "boolean"
 
-    indexes :makerruby, type: "string", analyzer: "ngram_analyzer", store: true
-    indexes :titleruby, type: "string", analyzer: "rubytext_analyzer", store: true
+    indexes :makerruby, type: "string", analyzer: "ngram_analyzer",
+      store: true
+    indexes :titleruby, type: "string", analyzer: "rubytext_analyzer",
+      store: true
   end
 
   settings do
@@ -64,7 +71,10 @@ defmodule Extoon.Entry do
       analyzer :ja_analyzer,
         type: "custom", tokenizer: "ja_tokenizer",
         char_filter: ["html_strip", "kuromoji_neologd_iteration_mark"],
-        filter: ["kuromoji_neologd_baseform", "kuromoji_neologd_stemmer", "ja_posfilter", "cjk_width"]
+        filter: [
+          "kuromoji_neologd_baseform", "kuromoji_neologd_stemmer",
+          "ja_posfilter", "cjk_width"
+        ]
 
       tokenizer :kuromoji_pserson_dic,
         type: "kuromoji_neologd_tokenizer"
@@ -244,18 +254,19 @@ defmodule Extoon.Entry do
   def with_relation(query, Category = mod), do: from q in query, join: j in assoc(q, :category), where: j.id == q.category_id
   def with_relation(query, Series = mod), do: from q in query, join: j in assoc(q, :series), where: j.id == q.series_id
   def with_relation(query, Maker = mod), do: from q in query, join: j in assoc(q, :maker), where: j.id == q.maker_id
-  def with_relation(query, LAbel = mod), do: from q in query, join: j in assoc(q, :label), where: j.id == q.label_id
+  def with_relation(query, Label = mod), do: from q in query, join: j in assoc(q, :label), where: j.id == q.label_id
+  def with_relation(query, EntryUrl = mod), do: from q in query, join: j in assoc(q, :urls), where: j.entry_id == q.id
+  def with_relation(query, EntryEmbed = mod), do: from q in query, join: j in assoc(q, :embeds), where: j.entry_id == q.id
 
-  def release(query),       do: from q in query, where: q.publish == true
-  def unrelease(query),     do: from q in query, where: q.publish == false
+  def prerelease(query), do: from q in query, where: q.release_date > ^Ecto.Date.utc
 
-  def infoable(query),      do: from q in query, where: not is_nil(q.maker_id) and not is_nil(q.category_id)
-  def uninfoable(query),    do: from q in query, where: is_nil(q.maker_id) and is_nil(q.category_id)
+  def release(query),    do: from q in query, where: q.publish == true
+  def unrelease(query),  do: from q in query, where: q.publish == false
 
-  def contentable(query),   do: from q in query, where: q.content != "" and not is_nil(q.content)
-  def uncontentable(query), do: from q in query, where: q.content == "" or is_nil(q.content)
+  def infoable(query),   do: from q in query, where: not is_nil(q.maker_id) and not is_nil(q.category_id) and q.content != "" and not is_nil(q.content)
+  def uninfoable(query), do: from q in query, where: is_nil(q.maker_id) and is_nil(q.category_id) and q.content == "" or is_nil(q.content)
 
-  def buildable(query),     do: from q in query, join: j in assoc(q, :info), where: not is_nil(j.info)
+  def buildable(query),  do: from q in query, join: j in assoc(q, :info), where: not is_nil(j.info)
 
   # def removed(query),       do: from p in query, where: p.removal == true
   # def unremoved(query),     do: from p in query, where: p.removal == false
@@ -265,39 +276,43 @@ defmodule Extoon.Entry do
   def published(query) do
     query
     |> release
+  end
+
+  # prerelease contents and published
+  #
+  def prereleased(query) do
+    query
+    |> unrelease
     |> infoable
-    |> contentable
-    # |> unremoved
+    |> prerelease
   end
 
   # before release contents.
   #
   def reserved(query) do
-    query
-    |> unrelease
-    |> infoable
-    |> contentable
-    # |> unremoved
-  end
+    query =
+      from q in query,
+        left_join: j1 in assoc(q, :urls),
+        left_join: j2 in assoc(q, :embeds),
+        where:
+          (j1.url != ""  and not is_nil(j1.url))
+            or
+          (j2.code != "" and not is_nil(j2.code)),
+        group_by: q.id
 
-  # before reserve status
-  #
-  def infoabled(query) do
     query
     |> unrelease
     |> infoable
-    |> uncontentable
-    # |> unremoved
   end
 
   # buildable contents.
   #
   def buildabled(query) do
-    from(query, preload: :info)
+    query
+    |> from(preload: :info)
     |> buildable
     |> unrelease
     |> uninfoable
-    |> uncontentable
     # |> unremoved
   end
 
