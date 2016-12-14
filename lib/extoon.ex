@@ -14,10 +14,11 @@ defmodule Extoon do
       supervisor(Extoon.Endpoint, []),
       # Start your own worker by calling: Extoon.Worker.start_link(arg1, arg2, arg3)
       # worker(Extoon.Worker, [arg1, arg2, arg3]),
-      worker(ConCache, [[ttl_check: :timer.seconds(59), ttl: :timer.seconds(60 * 60 * 2)], [name: :ranking]], id: :extoon_ranking_cache),
-      worker(ConCache, [[ttl_check: :timer.seconds(60), ttl: :timer.seconds(60 * 10)], [name: :entries]], id: :extoon_entries_cache),
-      worker(ConCache, [[ttl_check: :timer.seconds(360), ttl: :timer.seconds(60 * 60)], [name: :categories]], id: :extoon_categories_cache),
       worker(ConCache, [[ttl_check: :timer.seconds(600), ttl: :timer.seconds(60 * 60 * 24 * 1)], [name: :es]], id: :extoon_es_cache),
+      worker(ConCache, [[ttl_check: :timer.seconds(60), ttl: :timer.seconds(60 * 10)], [name: :entries]], id: :extoon_entries_cache),
+      worker(ConCache, [[ttl_check: :timer.seconds(59), ttl: :timer.seconds(60 * 60 * 2)], [name: :ranking]], id: :extoon_ranking_cache),
+      worker(ConCache, [[ttl_check: :timer.seconds(360), ttl: :timer.seconds(60 * 60)], [name: :categories]], id: :extoon_categories_cache),
+      worker(ConCache, [[ttl_check: :timer.seconds(44), ttl: :timer.seconds(60 * 60 * 24 * 1)], [name: :encjson]], id: :extoon_encjson_cache),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

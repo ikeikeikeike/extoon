@@ -15,7 +15,7 @@ defmodule Extoon.MyHelpers do
     end
   end
   def translate_default(msg) do
-    Gettext.dgettext(Extoon.Gettext, "default", msg || "")
+    Gettext.dgettext(Extoon.Gettext, "default", "#{msg}")
   end
 
   def locale do
@@ -238,5 +238,14 @@ defmodule Extoon.MyHelpers do
     end
   end
   def active?(conn, _), do: false
+
+  def enc(:thumbs, model, thumbs) when is_list(thumbs) do
+    ConCache.get_or_store :encjson, "#{Funcs.thename model}:#{model.id}:#{length thumbs}", fn ->
+      Poison.encode! Enum.map(thumbs, &Thumb.get_thumb/1)
+    end
+  end
+  def enc(:thumbs, %{thumbs: thumbs} = model) do
+    enc :thumbs, model, Enum.take(thumbs, -(length(thumbs) - 1))
+  end
 
 end

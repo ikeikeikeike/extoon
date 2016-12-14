@@ -10,13 +10,25 @@ defmodule Extoon.HomeController do
   plug Extoon.Ctrl.Plug.AssignRanking
 
   def index(conn, params) do
+    order = Enum.random([:release_date, :sort, :id])
     qs =
-      from(q in Entry, order_by: [desc: q.id], limit: 35)
+      from(q in Entry, order_by: [desc: ^order], limit: 35)
       |> Entry.query(:index)
       |> Entry.published
 
     entries = Repo.paginate(qs, params)
 
-    render conn, "index.html", entries: entries
+    render conn, "index.html", entries: entries, order: orderkey(order)
+  end
+
+  defp orderkey(name) do
+    case name do
+      :release_date ->
+        :release
+      :sort ->
+        :hottest
+      :id ->
+        :latest
+    end
   end
 end
