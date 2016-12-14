@@ -14,7 +14,8 @@ defmodule Extoon.Mixfile do
   end
 
   defp version do
-    v = "0.4.20"
+
+    v = "0.4.21"
     File.write! "VERSION", v
     v
   end
