@@ -4,7 +4,7 @@ defmodule Extoon.RssController do
 
   def index(conn, _params) do
     entries =
-      from(q in Entry, order_by: [desc: q.id])
+      from(q in Entry, order_by: [desc: q.id], limit: 50)
       |> Entry.query(:rss)
       |> Entry.published
       |> Repo.all

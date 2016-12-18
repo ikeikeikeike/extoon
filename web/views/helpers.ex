@@ -254,4 +254,6 @@ defmodule Extoon.MyHelpers do
     |> List.first
   end
 
+  def showpage?(conn), do: !! conn.assigns[:entry]
+
 end

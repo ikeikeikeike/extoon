@@ -3,6 +3,40 @@ defmodule Extoon.EntryView do
 
   alias Extoon.Thumb
 
+  def page_title(:show, assigns) do
+    title = truncate(assigns.entry.title, length: 100)
+    title <> " - " <> gettext("Default Page Title")
+  end
+
+  def page_title(:release, assigns) do
+    gettext("Release Default Page Title") <> " - " <> gettext("Default Page Title")
+  end
+
+  def page_title(:prerelease, assigns) do
+    gettext("Prerelease Default Page Title") <> " - " <> gettext("Default Page Title")
+  end
+
+  def page_title(:hottest, assigns) do
+    gettext("Hottest Default Page Title") <> " - " <> gettext("Default Page Title")
+  end
+
+  def page_title(:latest, assigns) do
+    gettext("Latest Default Page Title") <> " - " <> gettext("Default Page Title")
+  end
+
+  def page_description(:show, assigns) do
+    after_description =
+      (assigns[:entries] || [])
+      |> Enum.map(fn entry -> entry.title end)
+      |> Enum.join(", ")
+
+    gettext("Content Explain") <> ": " <>
+    Enum.join([
+      truncate(extract(:content, assigns.entry.content), length: 200),
+      truncate(after_description, length: 200),
+    ], ", ")
+  end
+
   def render("suggest.json", %{resources: resources}) do
     Phoenix.View.render_many(resources, __MODULE__, "typeahead.json", as: :resource)
   end
