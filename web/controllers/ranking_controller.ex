@@ -18,7 +18,9 @@ defmodule Extoon.RankingController do
     c1 = Repo.paginate(from(q in qs, where: q.category_id == 1), %{page: 1, page_size: 50})
     c2 = Repo.paginate(from(q in qs, where: q.category_id == 2), %{page: 1, page_size: 50})
     c3 = Repo.paginate(from(q in qs, where: q.category_id == 3), %{page: 1, page_size: 50})
+    zipped = %{c1 | entries: List.zip([c1.entries, c2.entries, c3.entries])}
+    # zipped = %{c1 | entries: List.zip([c1.entries, c2.entries, c1.entries])}
 
-    render conn, "index.html", c1: c1, c2: c2, c3: c3
+    render conn, "index.html", c1: c1, c2: c2, c3: c3, zipped: zipped
   end
 end
