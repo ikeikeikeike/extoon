@@ -8,7 +8,12 @@ defmodule Extoon.Redis.Plug.Access do
   def call(conn, opts) do
     id = conn.params[opts[:key]]
 
-    if present?(id), do: Ranking.incr id
+    case Integer.parse(id) do
+      {id, _} ->
+        if present?(id), do: Ranking.incr id
+      :error   ->
+        nil
+    end
 
     conn
   end

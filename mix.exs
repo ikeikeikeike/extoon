@@ -14,8 +14,7 @@ defmodule Extoon.Mixfile do
   end
 
   defp version do
-
-    v = "0.4.21"
+    v = "0.4.24"
     File.write! "VERSION", v
     v
   end
@@ -48,6 +47,7 @@ defmodule Extoon.Mixfile do
        :floki,
        :mochiweb,
        :html_sanitize_ex,
+       :html_entities,
 
        :con_cache,
 
@@ -100,6 +100,7 @@ defmodule Extoon.Mixfile do
       {:floki, "~> 0.11"},
       {:the_fuzz, "~> 0.3"},
       {:phoenix_html_simplified_helpers, "~> 0.7"},
+      {:html_entities, "~> 0.3"},
       {:html_sanitize_ex, "~> 1.1"},
       {:floki, "~> 0.11"},
       {:mochiweb, ">= 2.12.2", override: true},

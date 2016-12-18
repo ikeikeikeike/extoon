@@ -12,11 +12,13 @@ defmodule Extoon.Redis.Ranking do
     "#{key}/#{Timex.format! date, @format}"
   end
 
-  def incr(id, time \\ :calendar.local_time) do
+  def incr(id, time \\ :calendar.local_time)
+  def incr(id, time) when is_integer(id) do
     time
     |> Timex.format!(@format)
     |> Base.zincrby(1, id)
   end
+  def incr(_, _), do: :error
 
   def sum(:all), do: sum(nil, :all)
   def sum(time, :all) do

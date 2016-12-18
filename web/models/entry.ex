@@ -239,6 +239,12 @@ defmodule Extoon.Entry do
     preload: ^@query_doc
   end
 
+  @query_rss [:category, :maker, :label, :series, :tags, :thumbs]
+  def query(query, :rss) do
+    from q in query,
+    preload: ^@query_rss
+  end
+
   def query(query, :show) do
     from q in query,
     preload: [

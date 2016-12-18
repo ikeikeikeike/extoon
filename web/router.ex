@@ -18,6 +18,13 @@ defmodule Extoon.Router do
   end
 
   scope "/", Extoon do
+    pipe_through :api
+
+    get "/rss", RssController, :index
+    get "/robots.txt", RobotController, :index
+  end
+
+  scope "/", Extoon do
     pipe_through :browser # Use the default browser stack
 
     get "/", HomeController, :index

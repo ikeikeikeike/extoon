@@ -248,4 +248,10 @@ defmodule Extoon.MyHelpers do
     enc :thumbs, model, Enum.take(thumbs, -(length(thumbs) - 1))
   end
 
+  def extract(:content, content) do
+    content
+    |> String.split(["(C)", "(c)", "（c）", "©"])
+    |> List.first
+  end
+
 end
