@@ -246,6 +246,7 @@ defmodule Extoon.MyHelpers do
 
   def extract(:content, content) do
     content
+    |> Kernel.||("")
     |> String.split(["(C)", "(c)", "（c）", "©"])
     |> List.first
   end
