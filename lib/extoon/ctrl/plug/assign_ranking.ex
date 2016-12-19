@@ -4,14 +4,15 @@ defmodule Extoon.Ctrl.Plug.AssignRanking do
   import Extoon.Checks, only: [blank?: 1]
 
   alias Extoon.{Repo, Entry}
+  alias Extoon.Redis.Ranking
 
   def init(opts), do: opts
   def call(conn, _opts) do
-    ids = Extoon.Redis.Ranking.top :weekly, 0, 100
+    ids = Ranking.top :weekly, 0, 100
     ids =
       if blank?(ids) do
-        Extoon.Redis.Ranking.sum :weekly  # TODO: batch
-        Extoon.Redis.Ranking.top :weekly, 0, 100
+        Ranking.sum :weekly  # TODO: batch
+        Ranking.top :weekly, 0, 100
       else
         ids
       end
@@ -26,6 +27,7 @@ defmodule Extoon.Ctrl.Plug.AssignRanking do
         ranking =
           from(q in Entry, where: q.id in ^ids)
           |> Entry.query(:index)
+          |> Entry.published
           |> Repo.all
 
         Enum.map ids, fn id ->

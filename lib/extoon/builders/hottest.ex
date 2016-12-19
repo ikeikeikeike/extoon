@@ -4,16 +4,17 @@ defmodule Extoon.Builders.Hottest do
   import Ecto.Query, only: [from: 2]
 
   alias Extoon.{Repo, Entry}
+  alias Extoon.Redis.Ranking
 
   require Logger
 
   def run, do: run []
   def run([]) do
-    ids = Extoon.Redis.Ranking.top :weekly
+    ids = Ranking.top :weekly
     ids =
       if blank?(ids) do
-        Extoon.Redis.Ranking.sum :weekly
-        Extoon.Redis.Ranking.top :weekly
+        Ranking.sum :weekly
+        Ranking.top :weekly
       else
         ids
       end

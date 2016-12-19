@@ -7,9 +7,8 @@ defmodule Extoon.EntryController do
   import Ecto.Query, only: [from: 1, from: 2]
 
   plug Extoon.Ctrl.Plug.AssignPath
+  plug Extoon.Ctrl.Plug.AssignEntry
   plug Extoon.Ctrl.Plug.AssignCategory
-  plug Extoon.Ctrl.Plug.AssignLatest
-  plug Extoon.Ctrl.Plug.AssignHottest
   plug Extoon.Ctrl.Plug.AssignRanking
   plug Extoon.Ctrl.Plug.ParamsPaginator
   plug Extoon.Redis.Plug.Access, [key: "id"] when action in [:show]

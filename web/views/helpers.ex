@@ -63,10 +63,10 @@ defmodule Extoon.MyHelpers do
     end
   end
 
-  def latest_entries(%{} = st, where),        do: latest_entries st.__struct__, where, 4
-  def latest_entries(mod, where),             do: latest_entries mod, where, 4
-  def latest_entries(%{} = st, where, limit), do: latest_entries st.__struct__, where, limit
-  def latest_entries(mod, where, limit) do
+  defp latest_entries(%{} = st, where),        do: latest_entries st.__struct__, where, 4
+  defp latest_entries(mod, where),             do: latest_entries mod, where, 4
+  defp latest_entries(%{} = st, where, limit), do: latest_entries st.__struct__, where, limit
+  defp latest_entries(mod, where, limit) do
     key = "entries:latest:#{Funcs.thename mod}:#{inspect where}:limit:#{limit}"
 
     ConCache.get_or_store :entries, key, fn ->
@@ -79,10 +79,6 @@ defmodule Extoon.MyHelpers do
       from([q, j] in qs, where: ^where)
       |> Repo.all
     end
-  end
-
-  def hottest_entries do
-
   end
 
   @def_keyword Application.get_env(:extoon, :categories)[:anime]

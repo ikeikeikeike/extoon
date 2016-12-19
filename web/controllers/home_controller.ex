@@ -4,9 +4,8 @@ defmodule Extoon.HomeController do
   alias Extoon.{Entry, Category}
 
   plug Extoon.Ctrl.Plug.AssignPath
+  plug Extoon.Ctrl.Plug.AssignEntry
   plug Extoon.Ctrl.Plug.AssignCategory
-  plug Extoon.Ctrl.Plug.AssignLatest
-  plug Extoon.Ctrl.Plug.AssignHottest
   plug Extoon.Ctrl.Plug.AssignRanking
   plug Extoon.Ctrl.Plug.ParamsPaginator
 
