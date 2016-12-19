@@ -2,6 +2,7 @@ defmodule Extoon.EntryView do
   use Extoon.Web, :view
 
   alias Extoon.Thumb
+  alias Extoon.MyHelpers
 
   def page_title(:show, assigns) do
     title = truncate(assigns.entry.title, length: 100)
@@ -56,6 +57,23 @@ defmodule Extoon.EntryView do
       # series: get_in(resource, [:series, Access.key(:name)]),
       tokens: String.split(title),
     }
+  end
+
+  def what(conn) do
+    case MyHelpers.what(conn, :base) do
+      "entry_release" ->
+        :release
+      "entry_prerelease" ->
+        :prerelease
+      "entry_hottest" ->
+        :hottest
+      "entry_latest" ->
+        :latest
+      "entry_index" ->
+        :search
+      _ ->
+        :none
+    end
   end
 
 

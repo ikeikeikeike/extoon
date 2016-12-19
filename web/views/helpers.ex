@@ -209,7 +209,7 @@ defmodule Extoon.MyHelpers do
     dpath method, [conn, as]
   end
 
-  def what?(conn, :path) do
+  def what(conn, :base) do
     routes = Extoon.Router.__routes__
 
     transformed =
