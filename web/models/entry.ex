@@ -248,7 +248,7 @@ defmodule Extoon.Entry do
   def query(query, :show) do
     from q in query,
     preload: [
-      :embeds, :urls, :thumbs, :tags, :category,
+      :info, :embeds, :urls, :thumbs, :tags, :category,
       maker: [entries: [:thumbs, :maker, :category]],
       label: [entries: [:thumbs, :maker, :category]],
       series: [entries: [:thumbs, :maker, :category]],

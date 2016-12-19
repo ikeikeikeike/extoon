@@ -3,9 +3,9 @@ defmodule Extoon.MyHelpers do
 
   import Ecto.Query, only: [from: 1, from: 2]
 
-  alias Extoon.Repo
-  alias Extoon.{Entry, Thumb}
-  alias Extoon.{Funcs, Levenshtein}
+  alias Extoon.{Repo, Entry, Thumb, Funcs, Levenshtein}
+  alias Extoon.Http.Client.Findinfo
+  alias CommonDeviceDetector.Detector
 
   def translate_default({msg, opts}) do
     if count = opts[:count] do
@@ -252,4 +252,15 @@ defmodule Extoon.MyHelpers do
 
   def showpage?(conn), do: !! conn.assigns[:entry]
 
+  def affiURL(conn, info) when is_list(info) do
+    urls =
+      if Detector.desktop?(conn) do
+        Findinfo.affiURL info
+      else
+        Findinfo.affiURL info, :sp
+      end
+
+    List.first urls
+  end
+  def affiURL(conn, _), do: nil
 end

@@ -97,6 +97,24 @@ defmodule Extoon.Http.Client.Findinfo do
     v
   end
 
+  def affiURL(items) when is_list(items) do
+    Enum.map(items, &affiURL/1)
+    |> Enum.filter(& &1)
+    |> Enum.uniq
+  end
+  def affiURL(item) do
+    item["affiliateURL"]
+  end
+
+  def affiURL(items, :sp) when is_list(items) do
+    Enum.map(items, &affiURL(&1, :sp))
+    |> Enum.filter(& &1)
+    |> Enum.uniq
+  end
+  def affiURL(item, :sp) do
+    item["affiliateURLsp"]
+  end
+
   def description(items) when is_list(items) do
     Enum.map(items, & description &1)
     |> Enum.filter(& present? &1)

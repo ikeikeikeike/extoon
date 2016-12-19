@@ -27,7 +27,7 @@ defmodule Extoon.Ctrl.Plug.AssignRanking do
         ranking =
           from(q in Entry, where: q.id in ^ids)
           |> Entry.query(:index)
-          |> Entry.published
+          # |> Entry.published  # TODO: bugfix
           |> Repo.all
 
         Enum.map ids, fn id ->
