@@ -8,11 +8,12 @@ defmodule Extoon.HomeController do
   plug Extoon.Ctrl.Plug.AssignLatest
   plug Extoon.Ctrl.Plug.AssignHottest
   plug Extoon.Ctrl.Plug.AssignRanking
+  plug Extoon.Ctrl.Plug.ParamsPaginator
 
   def index(conn, params) do
     order = Enum.random([:release_date, :sort, :id])
     qs =
-      from(q in Entry, order_by: [desc: ^order], limit: 35)
+      from(q in Entry, order_by: [desc: ^order])
       |> Entry.query(:index)
       |> Entry.published
 

@@ -8,6 +8,7 @@ defmodule Extoon.RankingController do
   plug Extoon.Ctrl.Plug.AssignLatest
   plug Extoon.Ctrl.Plug.AssignHottest
   plug Extoon.Ctrl.Plug.AssignRanking
+  plug Extoon.Ctrl.Plug.ParamsPaginator
 
   def index(conn, params) do
     qs =

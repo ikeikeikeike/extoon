@@ -11,6 +11,7 @@ defmodule Extoon.EntryController do
   plug Extoon.Ctrl.Plug.AssignLatest
   plug Extoon.Ctrl.Plug.AssignHottest
   plug Extoon.Ctrl.Plug.AssignRanking
+  plug Extoon.Ctrl.Plug.ParamsPaginator
   plug Extoon.Redis.Plug.Access, [key: "id"] when action in [:show]
 
   def index(conn, params) do
