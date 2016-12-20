@@ -11,7 +11,8 @@ defmodule Extoon.Sitemap do
   def gen_sitemap do
     create do
 
-      entries = Repo.all Entry.release(Entry)
+      publishes = Repo.all Entry.published(Entry)
+      prereleases = Repo.all Entry.prereleased(Entry)
       categories = Repo.all Category
       makers = Repo.all Maker
       labels = Repo.all Label
@@ -65,7 +66,12 @@ defmodule Extoon.Sitemap do
             priority: 0.5, changefreq: nil, expires: nil, mobile: bool
         end
 
-        Enum.each entries, fn m ->
+        Enum.each publishes, fn m ->
+          add Helpers.entry_path(EP, :show, m),
+            priority: 0.5, changefreq: nil, expires: nil, mobile: bool
+        end
+
+        Enum.each prereleases, fn m ->
           add Helpers.entry_path(EP, :show, m),
             priority: 0.5, changefreq: nil, expires: nil, mobile: bool
         end
