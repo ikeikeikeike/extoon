@@ -46,7 +46,7 @@ defmodule Extoon.EntryController do
 
   def latest(conn, params) do
     qs =
-      from(Entry, order_by: [desc: :id])
+      from(Entry, order_by: [desc: :published_at])
       |> Entry.query(:index)
       |> Entry.published
 

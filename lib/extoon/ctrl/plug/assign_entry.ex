@@ -24,7 +24,7 @@ defmodule Extoon.Ctrl.Plug.AssignEntry do
 
   defp latest do
     ConCache.get_or_store :entries, "entries:assign_latest", fn ->
-      from(q in Entry, order_by: [desc: q.id], limit: 35)
+      from(q in Entry, order_by: [desc: q.published_at], limit: 35)
       |> Entry.query(:index)
       |> Entry.published
       |> Repo.all

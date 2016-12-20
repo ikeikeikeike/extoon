@@ -17,7 +17,7 @@ defmodule Extoon.CategoryController do
     qs =
       from [q, j] in qs,
       where: j.alias == ^alias,
-      order_by: [desc: q.id],
+      order_by: [desc: q.published_at],
       limit: 32
 
     entries = Repo.paginate(qs, params)
@@ -31,7 +31,7 @@ defmodule Extoon.CategoryController do
       |> Entry.with_relation(Category)
       |> Entry.published
     qs =
-      from([q, j] in qs, order_by: [desc: q.id], limit: 32)
+      from([q, j] in qs, order_by: [desc: q.published_at], limit: 32)
 
     entries = Repo.paginate(qs, params)
 
@@ -46,7 +46,7 @@ defmodule Extoon.CategoryController do
     qs =
       from [q, j] in qs,
       where: j.alias == ^alias,
-      order_by: [desc: q.id],
+      order_by: [desc: q.published_at],
       limit: 32
 
     entries = Repo.paginate(qs, params)
@@ -60,7 +60,7 @@ defmodule Extoon.CategoryController do
       |> Entry.with_relation(Category)
       |> Entry.published
     qs =
-      from([q, j] in qs, order_by: [desc: q.id], limit: 32)
+      from([q, j] in qs, order_by: [desc: q.published_at], limit: 32)
 
     entries = Repo.paginate(qs, params)
 

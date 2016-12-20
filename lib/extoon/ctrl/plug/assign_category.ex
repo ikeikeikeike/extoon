@@ -31,7 +31,7 @@ defmodule Extoon.Ctrl.Plug.AssignCategory do
 
     ConCache.get_or_store :entries, key, fn ->
       qs =
-        from(q in Entry, order_by: [desc: q.id], limit: 35)
+        from(q in Entry, order_by: [desc: q.published_at], limit: 35)
         |> Entry.query(:index)
         |> Entry.published
         |> Entry.with_relation(Category)

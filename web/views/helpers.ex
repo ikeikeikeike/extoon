@@ -71,7 +71,7 @@ defmodule Extoon.MyHelpers do
 
     ConCache.get_or_store :entries, key, fn ->
       qs =
-        from(q in Entry, order_by: [desc: q.id], limit: ^limit)
+        from(q in Entry, order_by: [desc: q.published_at], limit: ^limit)
         |> Entry.query(:index)
         |> Entry.published
         |> Entry.with_relation(mod)
