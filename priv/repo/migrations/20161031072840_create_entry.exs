@@ -28,6 +28,8 @@ defmodule Extoon.Repo.Migrations.CreateEntry do
     create index(:entries, [:category_id])
     create index(:entries, [:publish])
     create index(:entries, [:sort])
+    create index(:entries, [:release_date])
+    create index(:entries, [:published_at])
 
   end
 end
