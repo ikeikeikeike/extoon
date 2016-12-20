@@ -61,6 +61,12 @@ config :logger, level: :warn
 #     config :extoon, Extoon.Endpoint, server: true
 #
 
+config :sitemap, [
+  host: "http://#{myhost}",
+  public_path: "",
+  files_path: "static/",
+]
+
 import_config "schedule.prod.exs"
 
 # Finally import the config/prod.secret.exs
