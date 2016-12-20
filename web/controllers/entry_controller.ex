@@ -22,6 +22,22 @@ defmodule Extoon.EntryController do
     render conn, "index.html", entries: entries
   end
 
+  def release(conn, %{"alias" => alias} = params) do
+    qs =
+      from(Entry)
+      |> Entry.query(:index)
+      |> Entry.with_relation(Category)
+      |> Entry.published
+    qs =
+      from [q, j] in qs,
+      where: j.alias == ^alias,
+      order_by: [desc: q.release_date]
+
+    entries = Repo.paginate(qs, params)
+
+    render conn, "index.html", entries: entries, category: Repo.get_by(Category, alias: alias)
+  end
+
   def release(conn, params) do
     qs =
       from(Entry, order_by: [desc: :release_date])

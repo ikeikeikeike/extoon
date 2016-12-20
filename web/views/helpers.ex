@@ -194,8 +194,11 @@ defmodule Extoon.MyHelpers do
   def dpath(method, args) when is_list(args) do
     apply Extoon.Router.Helpers, :"#{method}", args
   end
+  def dpath(method, conn, as, "blank") do
+    dpath method, [conn, as, ""]
+  end
   def dpath(method, conn, as, param)
-  when not is_nil(param) and param != "" do
+      when not is_nil(param) and param != "" do
     dpath method, [conn, as, param]
   end
   def dpath(method, conn, as, _param) do

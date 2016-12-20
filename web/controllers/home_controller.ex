@@ -17,18 +17,22 @@ defmodule Extoon.HomeController do
       |> Entry.published
 
     entries = Repo.paginate(qs, params)
+    {currently_path, order_key} = orderkey(conn, order)
 
-    render conn, "index.html", entries: entries, order: orderkey(order)
+    render conn, "index.html",
+      entries: entries,
+      order_key: order_key,
+      currently_path: currently_path
   end
 
-  defp orderkey(name) do
+  defp orderkey(conn, name) do
     case name do
       :release_date ->
-        :release
+        {entry_path(conn, :release, ""), :release}
       :sort ->
-        :hottest
+        {entry_path(conn, :hottest), :hottest}
       :id ->
-        :latest
+        {entry_path(conn, :latest), :latest}
     end
   end
 end

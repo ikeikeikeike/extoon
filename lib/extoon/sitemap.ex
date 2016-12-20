@@ -25,7 +25,7 @@ defmodule Extoon.Sitemap do
         add Helpers.entry_path(EP, :index),
           priority: 0.5, changefreq: "daily", expires: nil, mobile: bool
 
-        add Helpers.entry_path(EP, :release),
+        add Helpers.entry_path(EP, :release, ""),
           priority: 0.5, changefreq: "daily", expires: nil, mobile: bool
 
         add Helpers.entry_path(EP, :prerelease),
@@ -41,6 +41,9 @@ defmodule Extoon.Sitemap do
           priority: 0.5, changefreq: "hourly", expires: nil, mobile: bool
 
         Enum.each categories, fn m ->
+          add Helpers.entry_path(EP, :release, m.alias),
+            priority: 0.5, changefreq: "daily", expires: nil, mobile: bool
+
           add Helpers.category_path(EP, :index, m.alias),
             priority: 0.5, changefreq: "daily", expires: nil, mobile: bool
 

@@ -31,10 +31,14 @@ defmodule Extoon.Router do
 
     scope "/e" do
       get "/", EntryController, :index
-      get "/release", EntryController, :release
       get "/prerelease", EntryController, :prerelease
       get "/latest", EntryController, :latest
       get "/hottest", EntryController, :hottest
+    end
+
+    scope "/release" do
+      get "/:alias", EntryController, :release
+      get "/", EntryController, :release
     end
 
     scope "/s" do
