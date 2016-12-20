@@ -42,4 +42,7 @@ config :extoon, Extoon.Repo,
   hostname: "localhost",
   pool_size: 10
 
+config :extoon, :google_verify,
+  "noname"
+
 import_config "dev.secret.exs"
