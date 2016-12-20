@@ -11,7 +11,7 @@ defmodule Extoon.Sitemap do
   def gen_sitemap do
     create do
 
-      entries = Repo.all Entry
+      entries = Repo.all Entry.release(Entry)
       categories = Repo.all Category
       makers = Repo.all Maker
       labels = Repo.all Label
