@@ -92,6 +92,9 @@ exports.config = {
 
       'mkdir -p priv/static/css/fonts',
       'cp -f bower_components/icomoon-bower/fonts/* priv/static/css/fonts',
+
+      'cp -f bower_components/slick-carousel/slick/fonts/* priv/static/css/fonts',
+      'cp -f bower_components/slick-carousel/slick/ajax-loader.gif priv/static/css/',
     ]
   },
 
