@@ -10,14 +10,19 @@ defmodule Extoon.HomeController do
   plug Extoon.Ctrl.Plug.ParamsPaginator
 
   def index(conn, params) do
-    order = Enum.random([:release_date, :sort, :id])
+    order = Enum.random([
+      [desc: :release_date],
+      [asc: :sort],
+      [desc: :published_at]
+    ])
+
+    {currently_path, order_key} = orderkey(conn, order)
     qs =
-      from(q in Entry, order_by: [desc: ^order])
+      from(q in Entry, order_by: ^order)
       |> Entry.query(:index)
       |> Entry.published
 
     entries = Repo.paginate(qs, params)
-    {currently_path, order_key} = orderkey(conn, order)
 
     render conn, "index.html",
       entries: entries,
@@ -27,11 +32,11 @@ defmodule Extoon.HomeController do
 
   defp orderkey(conn, name) do
     case name do
-      :release_date ->
+      [desc: :release_date] ->
         {entry_path(conn, :release, ""), :release}
-      :sort ->
+      [asc: :sort] ->
         {entry_path(conn, :hottest), :hottest}
-      :id ->
+      [desc: :published_at] ->
         {entry_path(conn, :latest), :latest}
     end
   end

@@ -29,12 +29,12 @@ defmodule Extoon.CategoryView do
     case conn.path_info |> List.last do
       ^anime  ->
         gettext("Anime Default Page Title")
-
       ^third  ->
         gettext("Third Default Page Title")
-
       ^doujin ->
         gettext("Doujin Default Page Title")
+      _       ->
+        ""
     end
   end
 

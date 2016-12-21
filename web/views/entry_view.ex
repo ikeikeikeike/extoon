@@ -9,10 +9,6 @@ defmodule Extoon.EntryView do
     title <> " - " <> gettext("Default Page Title")
   end
 
-  def page_title(:release, assigns) do
-    gettext("Release Default Page Title") <> " - " <> gettext("Default Page Title")
-  end
-
   def page_title(:prerelease, assigns) do
     gettext("Prerelease Default Page Title") <> " - " <> gettext("Default Page Title")
   end
@@ -23,6 +19,29 @@ defmodule Extoon.EntryView do
 
   def page_title(:latest, assigns) do
     gettext("Latest Default Page Title") <> " - " <> gettext("Default Page Title")
+  end
+
+  def page_title(:release, assigns) do
+    release_title(assigns.conn) <> " - " <> gettext("Default Page Title")
+  end
+
+  @extra Application.get_env(:extoon, :categories)[:extra]
+
+  defp release_title(conn) do
+    anime = @extra[:anime][:alias]
+    third = @extra[:third][:alias]
+    doujin = @extra[:doujin][:alias]
+
+    case conn.path_info |> List.last do
+      ^anime  ->
+        gettext("Release Anime Page Title")
+      ^third  ->
+        gettext("Release Third Page Title")
+      ^doujin ->
+        gettext("Release Doujin Page Title")
+      _       ->
+        gettext("Release Default Page Title")
+    end
   end
 
   def page_description(:show, assigns) do

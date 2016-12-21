@@ -26,3 +26,5 @@ import "./slidermenu"
 import "./typeahead"
 import "./common"
 import "./ads"
+
+$('.dropdown-toggle').dropdownHover({});
