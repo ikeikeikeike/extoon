@@ -14,7 +14,7 @@ defmodule Extoon.Mixfile do
   end
 
   defp version do
-    v = "0.4.51"
+    v = "0.4.54"
     File.write! "VERSION", v
     v
   end
@@ -107,10 +107,10 @@ defmodule Extoon.Mixfile do
       {:floki, "~> 0.11"},
       {:mochiweb, ">= 2.12.2", override: true},
       {:con_cache, "~> 0.11"},
-      {:esx, github: "ikeikeikeike/esx"},
+      {:esx, "~> 0.2"},
+      {:scrivener_esx, "~> 0.2"},
       {:scrivener_ecto, "~> 1.0"},
       {:scrivener_html, "~> 1.1"},
-      {:scrivener_esx, github: "ikeikeikeike/scrivener_esx"},
       {:distillery, "~> 0.10"},
       {:credo, "~> 0.5", only: [:dev, :test]},
       {:sitemap, ">= 0.0.0"},
