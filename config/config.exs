@@ -29,13 +29,6 @@ config :exsentry,
   otp_app: :extoon,
   dsn: ""
 
-config :esx, ESx.Model,
-  repo: Extoon.Repo,
-  protocol: "http",
-  host: "localhost",
-  port: 9200,
-  trace: true
-
 config :extoon, :redis,
   ranking: "redis://127.0.0.1:6379/15"
 

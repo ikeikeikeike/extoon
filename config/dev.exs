@@ -42,6 +42,13 @@ config :extoon, Extoon.Repo,
   hostname: "localhost",
   pool_size: 10
 
+config :esx, ESx.Model,
+  repo: Extoon.Repo,
+  protocol: "http",
+  host: "127.0.0.1",
+  port: 9200,
+  trace: true
+
 config :extoon, :google_verify,
   "noname"
 

@@ -61,6 +61,13 @@ config :logger, level: :warn
 #     config :extoon, Extoon.Endpoint, server: true
 #
 
+config :esx, ESx.Model,
+  repo: Extoon.Repo,
+  protocol: "http",
+  host: "127.0.0.1",
+  port: 9200,
+  trace: false
+
 config :sitemap, [
   host: "http://#{myhost}",
   public_path: "",

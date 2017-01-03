@@ -5,7 +5,7 @@ defmodule Extoon.Entry do
   use Extoon.Checks.Ecto
   use ESx.Schema
 
-  alias Extoon.{Maker,Label,Series,Category,Info,Thumb,EntryUrl,EntryEmbed,Tag}
+  alias Extoon.{Maker, Label, Series, Category, Info, Thumb, EntryUrl, EntryEmbed, Tag}
 
   schema "entries" do
     belongs_to :maker, Maker
@@ -122,6 +122,12 @@ defmodule Extoon.Entry do
       release_date: st.release_date,
       publish: st.publish,
     }
+  end
+
+  def esreindex do
+    query(__MODULE__, :doc)
+    |> published
+    |> Extoon.ESx.reindex
   end
 
   def esquery(params \\ %{}) do
