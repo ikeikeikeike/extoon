@@ -10,6 +10,7 @@ defmodule Extoon.Builders.Publish do
   def run([]) do
     queryable =
       from q in Entry.reserved(Entry.query(Entry, :doc)),
+        where: q.release_date < ^(Ecto.DateTime.utc),
         order_by: q.updated_at,
         limit: 20
 
