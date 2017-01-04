@@ -30,9 +30,9 @@ build() {
 }
 
 download() {
-    rsync -avr --stats ${USER}@${BUILDING}:~/src/extoon/rel .
+    rsync -avr --stats ${USER}@${BUILDING}:~/src/extoon/_build/prod/rel _build/prod
 
-    (cd rel/extoon
+    (cd _build/prod/rel/extoon
         rm -rf  static
         ln -fs lib/extoon-${VERSION}/priv/static
     )
@@ -40,7 +40,7 @@ download() {
 
 upload() {
     # upload staging
-    rsync -avr --stats rel ${USER}@${PRODUCTION}:~/
+    rsync -avr --stats _build/prod/rel ${USER}@${PRODUCTION}:~/
 }
 
 upgrade() {
@@ -76,14 +76,14 @@ downgrade() {
 }
 
 remove() {
-    rm -fr rel/extoon/lib/extoon-$1
-    rm -fr rel/extoon/releases/$1
+    rm -fr _build/prod/rel/extoon/lib/extoon-$1
+    rm -fr _build/prod/rel/extoon/releases/$1
 
-    rsync -avr --delete --stats rel/extoon/lib      ${USER}@${BUILDING}:~/src/extoon/rel/extoon/
-    rsync -avr --delete --stats rel/extoon/releases ${USER}@${BUILDING}:~/src/extoon/rel/extoon/
+    rsync -avr --delete --stats _build/prod/rel/extoon/lib      ${USER}@${BUILDING}:~/src/extoon/_build/prod/rel/extoon/
+    rsync -avr --delete --stats _build/prod/rel/extoon/releases ${USER}@${BUILDING}:~/src/extoon/_build/prod/rel/extoon/
 
-    rsync -avr --delete --stats rel/extoon/lib      ${USER}@${PRODUCTION}:~/rel/extoon/
-    rsync -avr --delete --stats rel/extoon/releases ${USER}@${PRODUCTION}:~/rel/extoon/
+    rsync -avr --delete --stats _build/prod/rel/extoon/lib      ${USER}@${PRODUCTION}:~/rel/extoon/
+    rsync -avr --delete --stats _build/prod/rel/extoon/releases ${USER}@${PRODUCTION}:~/rel/extoon/
 }
 
 deployed() {
