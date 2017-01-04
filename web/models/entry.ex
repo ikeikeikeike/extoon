@@ -278,7 +278,7 @@ defmodule Extoon.Entry do
   def infoable(query),   do: from q in query, where: not is_nil(q.maker_id) and not is_nil(q.category_id) and q.content != "" and not is_nil(q.content)
   def uninfoable(query), do: from q in query, where: is_nil(q.maker_id) and is_nil(q.category_id) and q.content == "" or is_nil(q.content)
 
-  def buildable(query),  do: from q in query, join: j in assoc(q, :info), where: not is_nil(j.info)
+  def buildable(query),  do: from q in query, join: j in assoc(q, :info), where: not is_nil(j.info) and not is_nil(q.title)
 
   # def removed(query),       do: from p in query, where: p.removal == true
   # def unremoved(query),     do: from p in query, where: p.removal == false
