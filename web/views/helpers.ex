@@ -1,5 +1,6 @@
 defmodule Extoon.MyHelpers do
   use Phoenix.HTML
+  use Phoenix.HTML.SimplifiedHelpers
 
   import Ecto.Query, only: [from: 1, from: 2]
 
@@ -250,8 +251,11 @@ defmodule Extoon.MyHelpers do
   def extract(:content, content) do
     content
     |> Kernel.||("")
-    |> String.split(["(C)", "(c)", "（c）", "©"])
+    |> String.split(["(C)", "(c)", "©", "（C）", "（c）"])
     |> List.first
+    |> String.split(["Windows"])
+    |> List.first
+    |> truncate(length: 600)
   end
 
   def showpage?(conn), do: !! conn.assigns[:entry]

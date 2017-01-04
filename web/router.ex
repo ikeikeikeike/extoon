@@ -80,6 +80,8 @@ defmodule Extoon.Router do
 
       # get "/:name/ranking", CategoryController, :ranking
     end
+
+    get "/about", AboutController, :index
   end
 
   # Other scopes may use custom stacks.
