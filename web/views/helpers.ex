@@ -2,6 +2,7 @@ defmodule Extoon.MyHelpers do
   use Phoenix.HTML
   use Phoenix.HTML.SimplifiedHelpers
 
+  import Access, only: [key: 1]
   import Ecto.Query, only: [from: 1, from: 2]
 
   alias Extoon.{Repo, Entry, Thumb, Funcs, Levenshtein}
@@ -148,6 +149,7 @@ defmodule Extoon.MyHelpers do
       conn.params["maker"],
       conn.params["label"],
       conn.params["series"],
+      get_in(conn.assigns, [key(:entry), key(:title)]),
     ]
     |> Enum.uniq
     |> Enum.join(" ")
