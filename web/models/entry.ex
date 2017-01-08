@@ -46,7 +46,8 @@ defmodule Extoon.Entry do
     indexes :category, type: "string", index: "not_analyzed"
     indexes :tags, type: "string", index: "not_analyzed"
 
-    indexes :title, type: "string", analyzer: "ja_analyzer"
+    indexes :title, type: "string", analyzer: "ngram_analyzer"
+    # indexes :title, type: "string", analyzer: "ja_analyzer"
     # indexes :content, type: "string", analyzer: "ja_analyzer"
 
     indexes :duration, type: "long"
@@ -54,10 +55,8 @@ defmodule Extoon.Entry do
 
     indexes :publish, type: "boolean"
 
-    indexes :makerruby, type: "string", analyzer: "ngram_analyzer",
-      store: true
-    indexes :titleruby, type: "string", analyzer: "rubytext_analyzer",
-      store: true
+    indexes :makerruby, type: "string", analyzer: "ngram_analyzer", store: true
+    indexes :titleruby, type: "string", analyzer: "rubytext_analyzer", store: true
   end
 
   settings do
