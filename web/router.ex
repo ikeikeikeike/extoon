@@ -81,7 +81,18 @@ defmodule Extoon.Router do
       # get "/:name/ranking", CategoryController, :ranking
     end
 
+    scope "rp" do
+      # get  "/contact", ReceptionController, :contact
+      # post "/contact", ReceptionController, :contact
+      get  "/removal", ReceptionController, :removal
+      post "/removal", ReceptionController, :removal
+    end
+
     get "/about", AboutController, :index
+  end
+
+  if Mix.env == :dev do
+    forward "/sent_emails", Bamboo.EmailPreviewPlug
   end
 
   # Other scopes may use custom stacks.

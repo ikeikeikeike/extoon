@@ -24,6 +24,13 @@ defmodule Extoon.MyHelpers do
     Gettext.get_locale(Extoon.Gettext)
   end
 
+  def randstring(length) do
+    length
+    |> :crypto.strong_rand_bytes
+    |> Base.url_encode64
+    |> binary_part(0, length)
+  end
+
   def thumb(thumbs) do
     if thumb = List.first(thumbs), do: Thumb.get_thumb(thumb), else: nil
   end
@@ -118,11 +125,11 @@ defmodule Extoon.MyHelpers do
   end
 
   def take_params(%Plug.Conn{} = conn, keys)
-  when is_list(keys),
+    when is_list(keys),
     do: take_params(conn, keys, %{})
 
   def take_params(%Plug.Conn{} = conn, keys, merge)
-  when is_list(keys) and is_list(merge),
+    when is_list(keys) and is_list(merge),
     do: take_params(conn, keys, Enum.into(merge, %{}))
 
   def take_params(%Plug.Conn{} = conn, keys, merge) do
@@ -133,7 +140,7 @@ defmodule Extoon.MyHelpers do
 
   def take_hidden_field_tags(%Plug.Conn{} = conn, keys) when is_list(keys) do
     Enum.map take_params(conn, keys), fn{key, value} ->
-      Tag.tag(:input, type: "hidden", id: key, name: key, value: value)
+      Phoenix.HTML.Tag.tag(:input, type: "hidden", id: key, name: key, value: value)
     end
   end
 

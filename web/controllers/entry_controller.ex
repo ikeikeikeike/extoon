@@ -35,7 +35,8 @@ defmodule Extoon.EntryController do
 
     entries = Repo.paginate(qs, params)
 
-    render conn, "index.html", entries: entries, category: Repo.get_by(Category, alias: alias)
+    render conn, "index.html",
+      entries: entries, category: Repo.get_by(Category, alias: alias)
   end
 
   def release(conn, params) do

@@ -14,7 +14,7 @@ defmodule Extoon.Mixfile do
   end
 
   defp version do
-    v = "0.5.4"
+    v = "0.5.6"
     File.write! "VERSION", v
     v
   end
@@ -64,6 +64,8 @@ defmodule Extoon.Mixfile do
        :timex_ecto,
 
        :sitemap,
+       :bamboo,
+
        :distillery,
      ]]
   end
@@ -115,6 +117,7 @@ defmodule Extoon.Mixfile do
       {:distillery, "~> 1.0"},
       {:credo, "~> 0.5", only: [:dev, :test]},
       {:sitemap, ">= 0.0.0"},
+      {:bamboo, "~> 0.8"},
     ]
   end
 
