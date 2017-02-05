@@ -1,7 +1,7 @@
 defmodule Extoon.HomeController do
   use Extoon.Web, :controller
-  alias Extoon.Repo
-  alias Extoon.{Entry, Category}
+
+  alias Extoon.{Repo, Entry, Category, MyHelpers}
 
   plug Extoon.Ctrl.Plug.AssignPath
   plug Extoon.Ctrl.Plug.AssignEntry
@@ -31,13 +31,14 @@ defmodule Extoon.HomeController do
   end
 
   defp orderkey(conn, name) do
+    carried_locale = MyHelpers.take_params(conn, MyHelpers.carried_locales)
     case name do
       [desc: :release_date] ->
-        {entry_path(conn, :release, ""), :release}
+        {entry_path(conn, :release, "", carried_locale), :release}
       [asc: :sort] ->
-        {entry_path(conn, :hottest), :hottest}
+        {entry_path(conn, :hottest, carried_locale), :hottest}
       [desc: :published_at] ->
-        {entry_path(conn, :latest), :latest}
+        {entry_path(conn, :latest, carried_locale), :latest}
     end
   end
 end
