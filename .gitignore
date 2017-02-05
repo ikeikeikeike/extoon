@@ -38,6 +38,7 @@ erl_crash.dump
 /web/static/js/ads.js
 /web/static/assets/prepare/common.js
 
+/web/views
 /web/templates
 /web/emails/contact.ex
 
