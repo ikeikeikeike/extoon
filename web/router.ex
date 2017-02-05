@@ -81,7 +81,7 @@ defmodule Extoon.Router do
       # get "/:name/ranking", CategoryController, :ranking
     end
 
-    scope "rp" do
+    scope "/rp" do
       # get  "/contact", ReceptionController, :contact
       # post "/contact", ReceptionController, :contact
       get  "/removal", ReceptionController, :removal
@@ -148,7 +148,7 @@ defmodule Extoon.Router do
       # get "/:name/ranking", CategoryController, :ranking
     end
 
-    scope "rp" do
+    scope "/rp" do
       # get  "/contact", ReceptionController, :contact
       # post "/contact", ReceptionController, :contact
       get  "/removal", ReceptionController, :removal
@@ -216,7 +216,7 @@ defmodule Extoon.Router do
       # get "/:name/ranking", CategoryController, :ranking
     end
 
-    scope "rp" do
+    scope "/rp" do
       # get  "/contact", ReceptionController, :contact
       # post "/contact", ReceptionController, :contact
       get  "/removal", ReceptionController, :removal
@@ -284,7 +284,7 @@ defmodule Extoon.Router do
       # get "/:name/ranking", CategoryController, :ranking
     end
 
-    scope "rp" do
+    scope "/rp" do
       # get  "/contact", ReceptionController, :contact
       # post "/contact", ReceptionController, :contact
       get  "/removal", ReceptionController, :removal

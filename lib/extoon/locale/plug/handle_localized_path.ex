@@ -8,10 +8,12 @@ defmodule Extoon.Locale.Plug.HandleLocalizedPath do
     case conn.path_info do
       [locale | rest] ->
         if locale in supported_locales do
+          params = Map.merge conn.params, %{"hl" => locale}
 
           %{conn | path_info: rest}
           |> assign(:locale, locale)
           |> assign(:path_locale, locale)
+          |> struct([params: params])
         else
           conn
         end
