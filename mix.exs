@@ -14,7 +14,7 @@ defmodule Extoon.Mixfile do
   end
 
   defp version do
-    v = "0.5.23"
+    v = "0.5.24"
     File.write! "VERSION", v
     v
   end
@@ -23,51 +23,57 @@ defmodule Extoon.Mixfile do
   #
   # Type `mix help compile.app` for more information.
   def application do
-    [mod: {Extoon, []},
-     applications: [
-       :phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-       :phoenix_ecto, :postgrex,
+    [
+      mod: {Extoon, []},
+      applications: [
+        :phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
+        :phoenix_ecto, :postgrex,
 
-       :httpoison,
+        :httpoison,
 
-       :arc_ecto,
-       :ex_aws,
-       :hackney,
-       :poison,
+        :arc_ecto,
+        :ex_aws,
+        :hackney,
+        :poison,
 
-       :exsentry,
-       :quantum,
-       :rdtype,
-       :common_device_detector,
+        :exsentry,
+        :quantum,
+        :rdtype,
+        :common_device_detector,
 
-       :floki,
-       :the_fuzz,
-       :phoenix_html_simplified_helpers,
+        :floki,
+        :the_fuzz,
+        :phoenix_html_simplified_helpers,
 
-       :floki,
-       :mochiweb,
-       :html_sanitize_ex,
-       :html_entities,
+        :floki,
+        :mochiweb,
+        :html_sanitize_ex,
+        :html_entities,
 
-       :con_cache,
+        :con_cache,
 
-       :esx,
-       :scrivener_esx,
-       :scrivener_ecto,
-       :scrivener_html,
+        :esx,
+        :scrivener_esx,
+        :scrivener_ecto,
+        :scrivener_html,
 
-       :arc,
-       :exactor,
-       :exjsx,
-       :jsx,
-       :sweet_xml,
-       :timex_ecto,
+        :arc,
+        :exactor,
+        :exjsx,
+        :jsx,
+        :sweet_xml,
+        :timex_ecto,
 
-       :sitemap,
-       :bamboo,
+        :sitemap,
+        :bamboo,
 
-       :distillery,
-     ]]
+        :distillery,
+      ],
+      included_applications: [
+        :exsyslog,
+        :syslog,
+      ]
+    ]
   end
 
   # Specifies which paths to compile per environment.
@@ -90,14 +96,15 @@ defmodule Extoon.Mixfile do
 
       {:httpoison, "~> 0.9"},
 
+      {:poison, "~> 2.0", override: true},
+      {:yamerl, "~> 0.3", override: true},
+
       # arcs
       {:arc, "~> 0.6.0-rc3"},
       {:arc_ecto, "~> 0.5.0-rc1"},
       {:ex_aws, "~> 1.0.0-rc3"},
       {:hackney, "~> 1.5"},
-      {:poison, "~> 2.0"},
       {:sweet_xml, "~> 0.5"},
-      {:yamerl, "~> 0.3", override: true},
       {:quantum, "~> 1.7"},
       {:rdtype, github: "ikeikeikeike/rdtype"},
       {:common_device_detector, github: "ikeikeikeike/common_device_detector"},
@@ -115,9 +122,14 @@ defmodule Extoon.Mixfile do
       {:scrivener_ecto, "~> 1.0"},
       {:scrivener_html, "~> 1.1"},
       {:distillery, "~> 1.0"},
-      {:credo, "~> 0.5", only: [:dev, :test]},
       {:sitemap, ">= 0.0.0"},
       {:bamboo, "~> 0.8"},
+
+      # Throw syslog
+      {:exsyslog, "~> 1.0"},
+      # {:sentry, "~> 2.2"},
+
+      {:credo, "~> 0.5", only: [:dev, :test]},
     ]
   end
 

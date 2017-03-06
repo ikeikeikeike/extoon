@@ -26,6 +26,15 @@ config :extoon, Extoon.Endpoint,
     ]
   ]
 
+config :logger,
+  level: :debug,
+  backends: [
+    :console,
+    {ExSyslog, :exsyslog_error},
+    {ExSyslog, :exsyslog_debug},
+    {ExSyslog, :exsyslog_json}
+  ]
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 

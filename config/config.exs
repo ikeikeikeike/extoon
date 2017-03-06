@@ -22,6 +22,30 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :logger, :exsyslog_error,
+  level: :error,
+  format: "$date $time [$level] $levelpad$node $metadata $message",
+  metadata: [:module, :line, :function],
+  ident: "extoon",
+  facility: :local0,
+  option: [:pid, :cons]
+
+config :logger, :exsyslog_debug,
+  level: :debug,
+  format: "$date $time [$level] $message",
+  ident: "extoon",
+  facility: :local1,
+  option: [:pid, :perror]
+
+config :logger, :exsyslog_json,
+  level: :debug,
+  format: "$message",
+  formatter: ExSyslog.JsonFormatter,
+  metadata: [:module, :line, :function],
+  ident: "extoon",
+  facility: :local1,
+  option: :pid
+
 config :ua_inspector,
   database_path: Path.join(File.cwd!, "config/ua_inspector")
 

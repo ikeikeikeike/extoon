@@ -22,7 +22,13 @@ config :extoon, Extoon.Endpoint,
   version: Mix.Project.config[:version]
 
 # Do not print debug messages in production
-config :logger, level: :warn
+config :logger,
+  level: :warn,
+  backends: [
+    {ExSyslog, :exsyslog_error},
+    {ExSyslog, :exsyslog_debug},
+    {ExSyslog, :exsyslog_json}
+  ]
 
 # ## SSL Support
 #
