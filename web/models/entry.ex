@@ -163,7 +163,7 @@ defmodule Extoon.Entry do
   end
 
   def essuggest(word) do
-    query = %{
+    %{
       size: 8,
       fields: [],
       query: %{
@@ -262,12 +262,22 @@ defmodule Extoon.Entry do
     ]
   end
 
-  def with_relation(query, Category = mod), do: from q in query, join: j in assoc(q, :category), where: j.id == q.category_id
-  def with_relation(query, Series = mod), do: from q in query, join: j in assoc(q, :series), where: j.id == q.series_id
-  def with_relation(query, Maker = mod), do: from q in query, join: j in assoc(q, :maker), where: j.id == q.maker_id
-  def with_relation(query, Label = mod), do: from q in query, join: j in assoc(q, :label), where: j.id == q.label_id
-  def with_relation(query, EntryUrl = mod), do: from q in query, join: j in assoc(q, :urls), where: j.entry_id == q.id
-  def with_relation(query, EntryEmbed = mod), do: from q in query, join: j in assoc(q, :embeds), where: j.entry_id == q.id
+  def delete_item(%__MODULE__{} = model) do
+    m = Repo.preload model, @query_doc
+    Repo.delete m
+    ESx.delete_document m
+  end
+  def delete_item(id) do
+    model = Repo.get __MODULE__, id
+    delete_item model
+  end
+
+  def with_relation(query, Category = _mod), do: from q in query, join: j in assoc(q, :category), where: j.id == q.category_id
+  def with_relation(query, Series = _mod), do: from q in query, join: j in assoc(q, :series), where: j.id == q.series_id
+  def with_relation(query, Maker = _mod), do: from q in query, join: j in assoc(q, :maker), where: j.id == q.maker_id
+  def with_relation(query, Label = _mod), do: from q in query, join: j in assoc(q, :label), where: j.id == q.label_id
+  def with_relation(query, EntryUrl = _mod), do: from q in query, join: j in assoc(q, :urls), where: j.entry_id == q.id
+  def with_relation(query, EntryEmbed = _mod), do: from q in query, join: j in assoc(q, :embeds), where: j.entry_id == q.id
 
   def prerelease(query), do: from q in query, where: q.release_date > ^Ecto.Date.utc
 

@@ -25,10 +25,13 @@ defmodule Extoon.Builders.Hottest do
       |> Repo.all
 
     sorted_entries =
-      Enum.map ids, fn id ->
-        [elm] = Enum.filter ranking, & id == &1.id
-         elm
-      end
+      Enum.map(ids, fn id ->
+        case Enum.filter(ranking, & id == &1.id) do
+          [elm] -> elm
+          _     -> nil
+        end
+      end)
+      |> Enum.filter(& not is_nil &1)
 
     result =
       Enum.map Enum.with_index(sorted_entries, 1), fn {entry, index} ->
