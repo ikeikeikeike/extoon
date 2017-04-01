@@ -239,6 +239,7 @@ defmodule Extoon.Entry do
   end
 
   @query_doc [:category, :maker, :label, :series, :tags]
+  def query_doc, do: @query_doc
   def query(query, :doc) do
     from q in query,
     preload: ^@query_doc
@@ -260,16 +261,6 @@ defmodule Extoon.Entry do
       # category: [entries: ^(from __MODULE__, limit: 5)],
       # ^(from __MODULE__, order_by: [desc: :id]
     ]
-  end
-
-  def delete_item(%__MODULE__{} = model) do
-    m = Repo.preload model, @query_doc
-    Repo.delete m
-    ESx.delete_document m
-  end
-  def delete_item(id) do
-    model = Repo.get __MODULE__, id
-    delete_item model
   end
 
   def with_relation(query, Category = _mod), do: from q in query, join: j in assoc(q, :category), where: j.id == q.category_id
@@ -338,4 +329,3 @@ defmodule Extoon.Entry do
   end
 
 end
-

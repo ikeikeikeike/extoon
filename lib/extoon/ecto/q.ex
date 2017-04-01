@@ -1,5 +1,5 @@
 defmodule Extoon.Ecto.Q do
-  alias Extoon.Repo
+  alias Extoon.{Repo, ESx, Entry}
 
   import Extoon.Checks
   import Ecto.Query, only: [from: 1, from: 2]
@@ -58,5 +58,15 @@ defmodule Extoon.Ecto.Q do
     end
   end
   def fuzzy_find(_mod, [], model), do: model
+
+  def remove_entry(%{} = model) do
+    m = Repo.preload model, Entry.query_doc
+    Repo.delete m
+    ESx.delete_document m
+  end
+  def remove_entry(id) do
+    model = Repo.get Entry, id
+    remove_entry model
+  end
 
 end
