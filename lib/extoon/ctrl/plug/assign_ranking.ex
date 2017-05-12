@@ -30,10 +30,13 @@ defmodule Extoon.Ctrl.Plug.AssignRanking do
           # |> Entry.published  # TODO: bugfix
           |> Repo.all
 
-        Enum.map ids, fn id ->
-          [elm] = Enum.filter ranking, & id == &1.id
-           elm
-        end
+        Enum.map(ids, fn id ->
+          case Enum.filter(ranking, & id == &1.id) do
+            [elm] -> elm
+            _     -> nil
+          end
+        end)
+        |> Enum.filter(& not is_nil &1)
       end
 
     assign conn, :ranked_entries, ranked_entries

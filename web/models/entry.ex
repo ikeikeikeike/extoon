@@ -145,7 +145,7 @@ defmodule Extoon.Entry do
             }
           },
         }
-      }
+      },
     }
 
     query =
