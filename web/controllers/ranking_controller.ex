@@ -9,7 +9,7 @@ defmodule Extoon.RankingController do
   plug Extoon.Ctrl.Plug.AssignRanking
   plug Extoon.Ctrl.Plug.ParamsPaginator
 
-  def index(conn, params) do
+  def index(conn, _params) do
     qs =
       from(Entry, order_by: [asc: :sort])
       |> Entry.query(:index)

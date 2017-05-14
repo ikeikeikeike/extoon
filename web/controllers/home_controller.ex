@@ -1,7 +1,7 @@
 defmodule Extoon.HomeController do
   use Extoon.Web, :controller
 
-  alias Extoon.{Repo, Entry, Category, MyHelpers}
+  alias Extoon.{Repo, Entry, MyHelpers}
 
   plug Extoon.Ctrl.Plug.AssignPath
   plug Extoon.Ctrl.Plug.AssignEntry

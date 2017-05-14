@@ -14,7 +14,7 @@ defmodule Extoon.Mixfile do
   end
 
   defp version do
-    v = "0.5.36"
+    v = "0.5.38"
     File.write! "VERSION", v
     v
   end
@@ -94,17 +94,17 @@ defmodule Extoon.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
 
-      {:httpoison, "~> 0.9"},
-
-      {:poison, "~> 2.0", override: true},
-      {:yamerl, "~> 0.3", override: true},
+      {:httpoison, "~> 0.11"},
+      {:poison, "~> 3.0", override: true},
+      {:yamerl, "~> 0.4", override: true},
 
       # arcs
-      {:arc, "~> 0.6.0-rc3"},
-      {:arc_ecto, "~> 0.5.0-rc1"},
-      {:ex_aws, "~> 1.0.0-rc3"},
+      {:arc, "~> 0.8"},
+      {:arc_ecto, "~> 0.7"},
+      {:ex_aws, "~> 1.1"},
+      {:sweet_xml, "~> 0.6"},
+
       {:hackney, "~> 1.5"},
-      {:sweet_xml, "~> 0.5"},
       {:quantum, "~> 1.7"},
       {:rdtype, github: "ikeikeikeike/rdtype"},
       {:common_device_detector, github: "ikeikeikeike/common_device_detector"},

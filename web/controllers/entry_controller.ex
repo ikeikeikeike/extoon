@@ -1,8 +1,7 @@
 defmodule Extoon.EntryController do
   use Extoon.Web, :controller
 
-  alias Extoon.{Repo, Entry, Category, Thumb}
-  alias Extoon.Ecto.Q
+  alias Extoon.{Repo, Entry, Category}
 
   import Ecto.Query, only: [from: 1, from: 2]
 
@@ -83,7 +82,7 @@ defmodule Extoon.EntryController do
     render conn, "index.html", entries: entries
   end
 
-  def show(conn, %{"id" => id} = params) do
+  def show(conn, %{"id" => id} = _params) do
     entry = Repo.get!(Entry.query(Entry, :show), id)
     entries = Enum.take_random(conn.assigns[:latest_entries], 4)
 

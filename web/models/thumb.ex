@@ -20,7 +20,7 @@ defmodule Extoon.Thumb do
     timestamps()
   end
 
-  @requires ~w()a
+  # @requires ~w()a
   @options ~w(assoc_id name ext mime width height)a
 
   @doc """

@@ -3,7 +3,7 @@ defmodule Extoon.Builders.Info do
   import Extoon.Builders.Base
 
   alias Extoon.{Repo, Funcs}
-  alias Extoon.{Entry, Maker, Label, Series, Category, Tag, Thumb}
+  alias Extoon.{Entry, Maker, Label, Series, Category, Tag}
   alias Extoon.Ecto.Q
   alias Extoon.Http.Client.Findinfo
 
@@ -83,9 +83,9 @@ defmodule Extoon.Builders.Info do
   @categories Application.get_env(:extoon, :categories)
   def set_resource(resrces, :category) when is_list(resrces) do
     Enum.map(resrces, fn {entry, items, params} ->
-      with {name, r} when length(r) < 1 <- {@categories[:third], Findinfo.third(items)},
-           {name, r} when length(r) < 1 <- {@categories[:anime], Findinfo.anime(items)},
-           {name, r} when length(r) < 1 <- {@categories[:doujin], Findinfo.doujin(items)}
+      with {_name, r} when length(r) < 1 <- {@categories[:third], Findinfo.third(items)},
+           {_name, r} when length(r) < 1 <- {@categories[:anime], Findinfo.anime(items)},
+           {_name, r} when length(r) < 1 <- {@categories[:doujin], Findinfo.doujin(items)}
       do
         skip entry, "category"
       else
@@ -196,7 +196,7 @@ defmodule Extoon.Builders.Info do
 
   def update(resrces) when is_list(resrces) do
     result =
-      Enum.map resrces, fn {entry, items, params} ->
+      Enum.map resrces, fn {entry, _items, params} ->
         # params =
           # Map.put(params, :info, %{info: items, assoc_id: entry.id})
         changeset =
