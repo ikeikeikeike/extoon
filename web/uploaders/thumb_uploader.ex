@@ -2,7 +2,9 @@ defmodule Extoon.ThumbUploader do
   use Arc.Definition
   use Arc.Ecto.Definition
 
-  @versions [:original]
+  require Logger
+
+  @versions [:original, :suggest]
   @extension_whitelist ~w(.jpg .jpeg .gif .png .ico .bmp)
 
   def acl(:thumb, _), do: :public_read
@@ -12,9 +14,31 @@ defmodule Extoon.ThumbUploader do
     Enum.member?(@extension_whitelist, file_extension)
   end
 
-  # def transform(:size_100x66, _) do
-    # {:convert, "-thumbnail 100x66^ -gravity center -extent 100x66"}
-  # end
+  def transform(:original, _) do
+    conv = fn(input, output) ->
+      File.copy input, output
+
+      :os.cmd 'jpegoptim --strip-all --max=90 #{output}'
+
+      ""
+    end
+
+    {:echo, conv, :jpg}
+  end
+
+  @s_wxh "96x54"
+  def transform(:suggest, _) do
+    conv = fn(input, output) ->
+      :os.cmd 'convert -quality 100 -resize #{@s_wxh}^ -gravity center ' ++
+              '-crop #{@s_wxh}+0+0 +repage #{input} #{output}'
+
+      :os.cmd 'jpegoptim --strip-all --max=90 #{output}'
+
+      ""
+    end
+
+    {:echo, conv, :jpg}
+  end
 
   def s3_object_headers(_version, {file, _scope}) do
     [content_type: Plug.MIME.path(file.file_name)] # for "image.png", would produce: "image/png"
@@ -43,6 +67,10 @@ defmodule Extoon.ThumbUploader do
 
   def default_url(:original) do
     "https://placehold.it/300x200"
+  end
+
+  def default_url(:suggest) do
+    "https://placehold.it/#{@s_wxh}"
   end
 
 end

@@ -17,8 +17,11 @@ version() {
 }
 
 fixversion() {
-    # hg commit -m "fix version $VERSION" mix.exs VERSION
+    set +e
+    hg commit -m "fix version $VERSION" mix.exs VERSION
     hg push
+
+    set -e
 }
 
 build() {
