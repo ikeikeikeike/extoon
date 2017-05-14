@@ -17,27 +17,27 @@ defmodule Extoon.ThumbUploader do
   def transform(:original, _) do
     conv = fn(input, output) ->
       File.copy input, output
+      Logger.debug :os.cmd('jpegoptim --strip-all --max=70 #{output}')
+      Logger.debug :os.cmd('file #{output}')
 
-      :os.cmd 'jpegoptim --strip-all --max=90 #{output}'
-
-      ""
+      output
     end
 
-    {:echo, conv, :jpg}
+    {:file, conv, :jpg}
   end
 
-  @s_wxh "96x54"
   def transform(:suggest, _) do
     conv = fn(input, output) ->
-      :os.cmd 'convert -quality 100 -resize #{@s_wxh}^ -gravity center ' ++
-              '-crop #{@s_wxh}+0+0 +repage #{input} #{output}'
+      File.copy input, output
+      Logger.debug :os.cmd('convert -quality 100 -resize x70^ -gravity center ' ++
+                           '-crop x70+0+0 +repage #{input} #{output}')
+      Logger.debug :os.cmd('jpegoptim --strip-all --max=90 #{output}')
+      Logger.debug :os.cmd('file #{output}')
 
-      :os.cmd 'jpegoptim --strip-all --max=90 #{output}'
-
-      ""
+      output
     end
 
-    {:echo, conv, :jpg}
+    {:file, conv, :jpg}
   end
 
   def s3_object_headers(_version, {file, _scope}) do
@@ -47,7 +47,7 @@ defmodule Extoon.ThumbUploader do
   # def __storage, do: Arc.Storage.Local
   # def __storage, do: Arc.Storage.S3
 
-  def filename(version, {file, model}) do
+  def filename(version, {file, _model}) do
     fname = file.file_name
     fname = String.replace(fname, Path.extname(fname), "")
 
@@ -70,7 +70,7 @@ defmodule Extoon.ThumbUploader do
   end
 
   def default_url(:suggest) do
-    "https://placehold.it/#{@s_wxh}"
+    "https://placehold.it/96x70"
   end
 
 end
