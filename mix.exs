@@ -70,6 +70,7 @@ defmodule Extoon.Mixfile do
         :distillery,
       ],
       included_applications: [
+        :gen_stage,
         :exsyslog,
         :syslog,
       ]
@@ -97,6 +98,8 @@ defmodule Extoon.Mixfile do
       {:httpoison, "~> 0.11"},
       {:poison, "~> 3.0", override: true},
       {:yamerl, "~> 0.4", override: true},
+
+      {:gen_stage, "~> 0.11"},
 
       # arcs
       {:arc, "~> 0.8"},

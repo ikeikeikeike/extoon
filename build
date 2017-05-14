@@ -8,5 +8,7 @@ hg up -C
 # mix release.clean --implode --no-confirm
 mix deps.get
 
+MIX_ENV=prod bower install
+MIX_ENV=prod brunch build
 MIX_ENV=prod mix do phoenix.digest, compile
 MIX_ENV=prod mix release --env=prod --upgrade --verbose

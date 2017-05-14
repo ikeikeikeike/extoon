@@ -5,6 +5,8 @@ defmodule Extoon.Entry do
   use Extoon.Checks.Ecto
   use ESx.Schema
 
+  import Access, only: [key: 2]
+
   alias Extoon.{Maker, Label, Series, Category, Info, Thumb, EntryUrl, EntryEmbed, Tag}
 
   schema "entries" do
@@ -106,13 +108,16 @@ defmodule Extoon.Entry do
     end
   end
 
-  def as_indexed_json(st, opts) do
+  def as_indexed_json(st, _opts) do
+    label = Map.get(st, :label, %{}) || %{}
+    series = Map.get(st, :series, %{}) || %{}
+
     %{
       maker: st.maker.name,
       makerruby: st.maker.name,
       category: st.category.name,
-      label: get_in(st, [Access.key(:label), Access.key(:name)]),
-      series: get_in(st, [Access.key(:series), Access.key(:name)]),
+      label: get_in(label, [key(:name, nil)]),
+      series: get_in(series, [key(:name, nil)]),
       tags: Enum.map(st.tags, & &1.name),
       title: st.title,
       titleruby: st.title,
